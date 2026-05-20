@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/Card";
 import { getCurrentUser } from "@/lib/auth";
 import type { Plan } from "@/lib/types";
 import { AccountSection } from "./AccountSection";
+import { PreferencesSection } from "./PreferencesSection";
 import "./settings.css";
 
 export const metadata: Metadata = {
@@ -59,6 +60,16 @@ export default async function SettingsPage() {
             email={user.email}
             displayGreeting={user.display_greeting}
           />
+        </div>
+      </Card>
+
+      {/* ---- Preferences ---- */}
+      <Card style={{ padding: 0 }}>
+        <div className="settings__section-head">
+          <h2 className="settings__section-title">Preferences</h2>
+        </div>
+        <div className="settings__section-body">
+          <PreferencesSection />
         </div>
       </Card>
 

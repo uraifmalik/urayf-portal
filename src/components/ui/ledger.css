@@ -80,3 +80,17 @@
   line-height: var(--leading-body);
   color: var(--color-text-muted);
 }
+
+/* Quiet empty — a single body-muted line, matching the hint register.
+   Used on the Reports page where the section heading already names
+   the type, so the empty state collapses to one calm sentence. */
+.ledger__empty--quiet {
+  padding: var(--space-5) var(--space-4);
+}
+.ledger__empty-quiet {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--color-text-muted);
+}

@@ -21,27 +21,29 @@ export default function AddStoreForm() {
   }, [state]);
 
   return (
-    <form action={formAction}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-end",
-          gap: "var(--space-2)",
-        }}
+    <form
+      action={formAction}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "var(--space-4)",
+      }}
+    >
+      <TextField
+        label="Store name"
+        name="name"
+        type="text"
+        required
+        placeholder="New store name"
+      />
+      <Button
+        type="submit"
+        rank="secondary"
+        loading={pending}
+        style={{ width: "100%" }}
       >
-        <div style={{ flex: 1, minWidth: "200px" }}>
-          <TextField
-            label="Store name"
-            name="name"
-            type="text"
-            required
-            placeholder="New store name"
-          />
-        </div>
-        <Button type="submit" rank="secondary" loading={pending}>
-          Add store
-        </Button>
-      </div>
+        Add store
+      </Button>
     </form>
   );
 }

@@ -21,6 +21,10 @@ export interface LedgerProps {
   emptyTitle?: string;
   /** Muted guidance line below the headline. */
   emptyHint?: string;
+  /** Hide the leading type pill (for sections that already carry the type). */
+  hidePill?: boolean;
+  /** "default" — Fraunces headline + muted hint. "quiet" — a single body-muted line. */
+  emptyVariant?: "default" | "quiet";
 }
 
 /* Voice spec (Part 13) — the approved empty-list wording. */
@@ -31,14 +35,25 @@ const DEFAULT_EMPTY_HINT = "The first one will appear here once it's ready.";
  * urayf ledger (Part 10) — reports as a vertical list, chronological,
  * each row a type pill + title + date with the whole row clickable.
  * Empty state is a calm, editorial pair: a Fraunces line + muted
- * guidance (Part 11).
+ * guidance (Part 11). Pass emptyVariant="quiet" for a single
+ * body-muted line (used on the Reports page where the section
+ * heading already carries the type).
  */
 export function Ledger({
   rows,
   emptyTitle = DEFAULT_EMPTY_TITLE,
   emptyHint = DEFAULT_EMPTY_HINT,
+  hidePill = false,
+  emptyVariant = "default",
 }: LedgerProps) {
   if (rows.length === 0) {
+    if (emptyVariant === "quiet") {
+      return (
+        <div className="ledger__empty ledger__empty--quiet">
+          <p className="ledger__empty-quiet">{emptyTitle}</p>
+        </div>
+      );
+    }
     return (
       <div className="ledger__empty">
         <p className="ledger__empty-title">{emptyTitle}</p>
@@ -52,7 +67,7 @@ export function Ledger({
       {rows.map((row) => (
         <li key={row.id}>
           <Link href={row.href} className="ledger__row">
-            <TypePill>{row.pill}</TypePill>
+            {!hidePill && <TypePill>{row.pill}</TypePill>}
             <span className="ledger__row-main">
               <span className="ledger__row-title">{row.title}</span>
               {row.subtitle && (

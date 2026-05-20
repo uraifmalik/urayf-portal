@@ -2,10 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Icon, type IconName } from "@/components/ui/Icon";
-import { Toggle } from "@/components/ui/Toggle";
 import type { Plan } from "@/lib/types";
 import { Wordmark } from "./Wordmark";
 import "./sidebar.css";
@@ -30,9 +28,6 @@ const SETTINGS_NAV: NavEntry = {
   label: "Settings",
   icon: "settings",
 };
-
-const THEME_KEY = "urayf-theme";
-const MOTION_KEY = "urayf-motion";
 
 export interface SidebarProps {
   /** Per-client custom greeting; null falls back to "Welcome back." */
@@ -78,49 +73,6 @@ export function Sidebar({
   onNavigate,
 }: SidebarProps) {
   const pathname = usePathname();
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [motion, setMotion] = useState<"full" | "reduced">("full");
-
-  // Apply the stored theme + motion preferences on mount.
-  useEffect(() => {
-    const storedTheme = localStorage.getItem(THEME_KEY);
-    if (storedTheme === "dark" || storedTheme === "light") {
-      setTheme(storedTheme);
-      document.documentElement.setAttribute("data-theme", storedTheme);
-    }
-
-    const storedMotion = localStorage.getItem(MOTION_KEY);
-    const initialMotion: "full" | "reduced" =
-      storedMotion === "full" || storedMotion === "reduced"
-        ? storedMotion
-        : window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "reduced"
-          : "full";
-    setMotion(initialMotion);
-    document.documentElement.setAttribute("data-motion", initialMotion);
-  }, []);
-
-  function handleTheme(on: boolean) {
-    const next = on ? "dark" : "light";
-    setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
-    try {
-      localStorage.setItem(THEME_KEY, next);
-    } catch {
-      /* storage unavailable — preference still applies this session */
-    }
-  }
-
-  function handleMotion(on: boolean) {
-    const next = on ? "full" : "reduced";
-    setMotion(next);
-    document.documentElement.setAttribute("data-motion", next);
-    try {
-      localStorage.setItem(MOTION_KEY, next);
-    } catch {
-      /* storage unavailable — preference still applies this session */
-    }
-  }
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
@@ -175,21 +127,8 @@ export function Sidebar({
         <p className="meeting__detail">10:00 AM with urayf</p>
       </Card>
 
-      {/* 5. bottom cluster — pushed down — preferences + identity */}
+      {/* 5. bottom cluster — pushed down — identity only */}
       <div className="sidebar__bottom">
-        <div className="sidebar__prefs">
-          <Toggle
-            label="Theme"
-            checked={theme === "dark"}
-            onChange={handleTheme}
-          />
-          <Toggle
-            label="Motion"
-            checked={motion === "full"}
-            onChange={handleMotion}
-          />
-        </div>
-
         {fullName && (
           <div className="sidebar__user">
             <span className="sidebar__avatar" aria-hidden="true">

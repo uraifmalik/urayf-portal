@@ -23,18 +23,9 @@
 
 /* ---- Section panel — header strip over a body / table ---- */
 .panel__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
   padding: var(--space-4);
   border-bottom: 1px solid var(--color-line-soft);
-}
-.panel__heading-text {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
+  text-align: center;
 }
 .panel__title {
   margin: 0;
@@ -48,24 +39,8 @@
   font-weight: var(--font-weight-regular);
   color: var(--color-text-muted);
 }
-.panel__intro {
-  margin: 0;
-  font-family: var(--font-ui);
-  font-size: var(--text-caption);
-  line-height: var(--leading-body);
-  color: var(--color-text-muted);
-}
 .panel__body {
   padding: var(--space-4);
-}
-.panel__note {
-  margin: 0;
-  padding: var(--space-3) var(--space-4);
-  border-top: 1px solid var(--color-line-soft);
-  font-family: var(--font-ui);
-  font-size: var(--text-caption);
-  line-height: var(--leading-body);
-  color: var(--color-text-faint);
 }
 
 /* ---- Table — Part 10 ---- */
@@ -105,13 +80,17 @@
 .admin-table__primary {
   color: var(--color-text-primary);
 }
-/* Numbers — right-aligned, tabular figures, set in Fraunces */
-.admin-table__num {
+/* Numbers — right-aligned, tabular figures, set in Fraunces.
+   The th selector is doubled so its specificity beats `.admin-table th`'s
+   default `text-align: left`; without that the header text drifts left
+   of its column values. */
+.admin-table th.admin-table__num,
+.admin-table td.admin-table__num {
   text-align: right;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 .admin-table td.admin-table__num {
   font-family: var(--font-display);
-  font-variant-numeric: lining-nums tabular-nums;
   color: var(--color-text-primary);
 }
 .admin-table__empty {

@@ -38,27 +38,29 @@ export default async function AdminPage() {
       {/* Upload a report --------------------------------------------- */}
       <Card style={{ padding: 0 }}>
         <div className="panel__head">
-          <div className="panel__heading-text">
-            <h2 className="panel__title">Upload a report</h2>
-            <p className="panel__intro">
-              The HTML file is delivered to the selected store&apos;s portal.
-            </p>
-          </div>
+          <h2 className="panel__title">Upload a report</h2>
         </div>
         <div className="panel__body">
           <UploadReportForm stores={stores} />
         </div>
       </Card>
 
+      {/* Add a store ------------------------------------------------- */}
+      <Card style={{ padding: 0 }}>
+        <div className="panel__head">
+          <h2 className="panel__title">Add a store</h2>
+        </div>
+        <div className="panel__body">
+          <AddStoreForm />
+        </div>
+      </Card>
+
       {/* Stores ------------------------------------------------------ */}
       <Card style={{ padding: 0 }}>
         <div className="panel__head">
-          <div className="panel__heading-text">
-            <h2 className="panel__title">
-              Stores <span className="panel__count">({stores.length})</span>
-            </h2>
-          </div>
-          <AddStoreForm />
+          <h2 className="panel__title">
+            Stores <span className="panel__count">({stores.length})</span>
+          </h2>
         </div>
         <div className="table-scroll">
           <table className="admin-table">
@@ -94,15 +96,13 @@ export default async function AdminPage() {
         </div>
       </Card>
 
-      {/* Client accounts --------------------------------------------- */}
+      {/* Accounts ---------------------------------------------------- */}
       <Card style={{ padding: 0 }}>
         <div className="panel__head">
-          <div className="panel__heading-text">
-            <h2 className="panel__title">
-              Client accounts{" "}
-              <span className="panel__count">({profiles.length})</span>
-            </h2>
-          </div>
+          <h2 className="panel__title">
+            Accounts{" "}
+            <span className="panel__count">({profiles.length})</span>
+          </h2>
         </div>
         <div className="table-scroll">
           <table className="admin-table">
@@ -130,22 +130,15 @@ export default async function AdminPage() {
             </tbody>
           </table>
         </div>
-        <p className="panel__note">
-          Client accounts are created in the Supabase Auth panel, then
-          assigned to a store in the dashboard (see{" "}
-          <code>supabase/schema.sql</code>).
-        </p>
       </Card>
 
       {/* All reports ------------------------------------------------- */}
       <Card style={{ padding: 0 }}>
         <div className="panel__head">
-          <div className="panel__heading-text">
-            <h2 className="panel__title">
-              All reports{" "}
-              <span className="panel__count">({reports.length})</span>
-            </h2>
-          </div>
+          <h2 className="panel__title">
+            All reports{" "}
+            <span className="panel__count">({reports.length})</span>
+          </h2>
         </div>
         <div className="table-scroll">
           <table className="admin-table">

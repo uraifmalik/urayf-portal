@@ -50,7 +50,12 @@ export default async function ReportsPage() {
             <div className="reports__section-head">
               <h2 className="reports__section-title">{title}</h2>
             </div>
-            <Ledger rows={rows} emptyTitle={emptyTitle} />
+            <Ledger
+              rows={rows}
+              emptyTitle={emptyTitle}
+              emptyVariant="quiet"
+              hidePill
+            />
           </Card>
         );
       })}

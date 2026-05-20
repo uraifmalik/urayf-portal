@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Toaster } from "@/components/ui/toast";
 import WelcomeModal from "@/components/portal/WelcomeModal";
+import { usePreferences } from "@/lib/preferences";
 import type { Plan } from "@/lib/types";
 import { Sidebar } from "./Sidebar";
 import { Wordmark } from "./Wordmark";
@@ -40,6 +41,7 @@ export function AppShell({
 }: AppShellProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const close = () => setMenuOpen(false);
+  usePreferences();
 
   return (
     <div className="shell" data-menu-open={menuOpen || undefined}>

@@ -110,33 +110,27 @@ export default function UploadReportForm({ stores }: { stores: Store[] }) {
         />
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "var(--space-3)",
-        }}
-      >
-        <Button
-          type="submit"
-          rank="primary"
-          loading={pending}
-          disabled={noStores}
+      {noStores && (
+        <p
+          style={{
+            margin: 0,
+            fontFamily: "var(--font-ui)",
+            fontSize: "var(--text-caption)",
+            color: "var(--color-text-muted)",
+          }}
         >
-          Upload report
-        </Button>
-        {noStores && (
-          <span
-            style={{
-              fontFamily: "var(--font-ui)",
-              fontSize: "var(--text-caption)",
-              color: "var(--color-text-muted)",
-            }}
-          >
-            Add a store before uploading a report.
-          </span>
-        )}
-      </div>
+          Add a store before uploading a report.
+        </p>
+      )}
+      <Button
+        type="submit"
+        rank="primary"
+        loading={pending}
+        disabled={noStores}
+        style={{ width: "100%" }}
+      >
+        Upload report
+      </Button>
     </form>
   );
 }

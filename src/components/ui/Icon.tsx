@@ -55,12 +55,13 @@ const ICONS: Record<string, ReactNode> = {
       <path d="M16.5 8.5 L20 12 L16.5 15.5" />
     </>
   ),
-  // Settings — a gear: hollow hub + six radial teeth at clock positions
-  // 12, 2, 4, 6, 8, 10 (proposed 7th icon; see notes)
+  // Settings — a gear: rim with six rectangular teeth at clock
+  // positions 12, 2, 4, 6, 8, 10, and a hollow inner hub. Rim r=7,
+  // tooth = 2 wide × 1.5 deep, hub r=3.6.
   settings: (
     <>
-      <circle cx="12" cy="12" r="3" />
-      <path d="M12 7 L12 3 M16.3 9.5 L19.8 7.5 M16.3 14.5 L19.8 16.5 M12 17 L12 21 M7.7 14.5 L4.2 16.5 M7.7 9.5 L4.2 7.5" />
+      <path d="M 10.4,1.1 L 13.6,1.1 L 14.2,3.2 A 7,7 0 0 1 16.4,4.5 L 18.4,3.5 L 20.5,5.6 L 19.5,7.6 A 7,7 0 0 1 20.7,9.8 L 22.8,10.4 L 22.8,13.6 L 20.7,14.2 A 7,7 0 0 1 19.5,16.4 L 20.5,18.4 L 18.4,20.5 L 16.4,19.5 A 7,7 0 0 1 14.2,20.8 L 13.6,22.9 L 10.4,22.9 L 9.8,20.8 A 7,7 0 0 1 7.6,19.5 L 5.6,20.5 L 3.5,18.4 L 4.5,16.4 A 7,7 0 0 1 3.3,14.2 L 1.2,13.6 L 1.2,10.4 L 3.3,9.8 A 7,7 0 0 1 4.5,7.6 L 3.5,5.6 L 5.6,3.5 L 7.6,4.5 A 7,7 0 0 1 9.8,3.2 Z" />
+      <circle cx="12" cy="12" r="3.6" />
     </>
   ),
 };
