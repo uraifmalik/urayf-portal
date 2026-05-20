@@ -23,12 +23,21 @@ create table if not exists public.stores (
 
 -- ---------- profiles (one per auth user) ----------
 create table if not exists public.profiles (
-  id         uuid primary key references auth.users(id) on delete cascade,
-  email      text not null,
-  full_name  text,
-  store_id   uuid references public.stores(id) on delete set null,
-  is_admin   boolean not null default false,
-  created_at timestamptz not null default now()
+  id                  uuid primary key references auth.users(id) on delete cascade,
+  email               text not null,
+  full_name           text,
+  -- Exact greeting for this client (e.g. 'Mr. Malik'); set manually,
+  -- never inferred. Null falls back to a generic greeting.
+  display_greeting    text,
+  store_id            uuid references public.stores(id) on delete set null,
+  is_admin            boolean not null default false,
+  -- Subscription tier: 'standard' | 'premium' | 'max'. Null = no plan.
+  plan                text,
+  -- Custom monthly rate in USD; overrides the standard plan price.
+  plan_rate_override  integer,
+  -- Tracks whether the first-login welcome modal has been shown.
+  has_seen_welcome    boolean not null default false,
+  created_at          timestamptz not null default now()
 );
 
 create index if not exists profiles_store_id_idx on public.profiles (store_id);
@@ -78,6 +87,32 @@ stable
 set search_path = public
 as $$
   select store_id from public.profiles where id = auth.uid();
+$$;
+
+-- Allow a client to update their OWN display_greeting and welcome
+-- flag without granting them general write access to profiles
+-- (store_id / is_admin stay admin-only via the RLS policies below).
+create or replace function public.set_display_greeting(new_greeting text)
+returns void
+language sql
+security definer
+set search_path = public
+as $$
+  update public.profiles
+     set display_greeting = nullif(trim(new_greeting), ''),
+         has_seen_welcome = true
+   where id = auth.uid();
+$$;
+
+create or replace function public.mark_welcome_seen()
+returns void
+language sql
+security definer
+set search_path = public
+as $$
+  update public.profiles
+     set has_seen_welcome = true
+   where id = auth.uid();
 $$;
 
 -- ============================================================

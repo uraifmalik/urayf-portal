@@ -1,0 +1,38 @@
+/* ============================================================
+   urayf — Pills — brand system Part 10 (LOCKED)
+   Tokens only: var(--color-*), var(--radius-*), var(--space-*),
+   var(--text-*), var(--font-*), var(--tracking-*).
+
+   A pill is a fine OUTLINED tag — caption-size, 1px border, no
+   heavy fill. Always paired with a word.
+   ============================================================ */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);    /* 5px / 8px */
+  border: 1px solid currentColor;            /* outline follows the text color */
+  border-radius: var(--radius-sm);           /* 3px — chips / pills */
+  background: none;                          /* no heavy fill */
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);            /* 10px */
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-normal);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ---- Status pills — 1px border + text in the status color ----
+   red = short / negative · green = over / positive ·
+   text-muted = neutral (pending, balanced). */
+.pill--positive { color: var(--color-accent-green); }
+.pill--negative { color: var(--color-accent-red); }
+.pill--neutral  { color: var(--color-text-muted); }
+
+/* ---- Type pills (Daily / Weekly / Monthly) ----
+   text-primary word, line-color outline — NOT the reserved gold.
+   Distinguished by their word, not by color. */
+.pill--type {
+  color: var(--color-text-primary);
+  border-color: var(--color-line);
+}

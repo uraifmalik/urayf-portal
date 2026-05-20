@@ -1,6 +1,15 @@
 import Link from "next/link";
-import ReportTypeBadge from "@/components/portal/ReportTypeBadge";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { TypePill } from "@/components/ui/Pill";
 import type { Report, Store } from "@/lib/types";
+import "./viewer.css";
+
+const TYPE_LABEL: Record<string, string> = {
+  daily: "Daily",
+  weekly: "Weekly",
+  monthly: "Monthly",
+};
 
 /**
  * Renders an uploaded HTML report inline.
@@ -8,8 +17,10 @@ import type { Report, Store } from "@/lib/types";
  * The file is loaded as the <iframe> source from our own route handler
  * (`/portal/reports/[id]/file`), which always serves it as `text/html` so
  * it renders as a page. The iframe is sandboxed so the report's own CSS/JS
- * cannot leak into or break the portal chrome. Rendered full-width inside
- * the dashboard layout, so the sidebar stays visible.
+ * cannot leak into or break the portal chrome.
+ *
+ * Only the viewer FRAME is brand-styled — the report inside the iframe is
+ * a standalone HTML file with its own styling and is left untouched.
  */
 export default function ReportViewer({
   report,
@@ -26,51 +37,50 @@ export default function ReportViewer({
   );
 
   return (
-    <div className="space-y-5">
-      <Link
-        href="/portal/reports"
-        className="inline-block text-sm text-zinc-400 transition-colors hover:text-white"
-      >
+    <div className="viewer">
+      <Link href="/portal/reports" className="viewer__back">
         ← Back to reports
       </Link>
 
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <ReportTypeBadge type={report.type} />
-            <span className="text-xs uppercase tracking-wide text-zinc-500">
+      <div className="viewer__head">
+        <div className="viewer__head-main">
+          <div className="viewer__meta">
+            <TypePill>{TYPE_LABEL[report.type] ?? report.type}</TypePill>
+            <span className="viewer__store">
               {store?.name ?? "Unknown store"}
             </span>
           </div>
-          <h1 className="text-2xl font-semibold text-white">{report.title}</h1>
-          <p className="text-sm text-zinc-500">Report date · {reportDate}</p>
+          <h1 className="viewer__title">{report.title}</h1>
+          <p className="viewer__date">Report date · {reportDate}</p>
         </div>
 
-        <div className="flex gap-2">
-          <a
+        <div className="viewer__actions">
+          <Button
+            rank="secondary"
             href={fileUrl}
             target="_blank"
             rel="noreferrer"
-            className="rounded-lg border border-white/10 px-3 py-2 text-sm text-zinc-300 transition-colors hover:border-white/30 hover:text-white"
           >
             Open in new tab
-          </a>
-          <a
+          </Button>
+          <Button
+            rank="primary"
             href={`${fileUrl}?download=1`}
             download={report.file_name ?? "report.html"}
-            className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-zinc-200"
           >
             Download
-          </a>
+          </Button>
         </div>
       </div>
 
-      <iframe
-        src={fileUrl}
-        title={report.title}
-        className="h-[78vh] min-h-[600px] w-full rounded-xl border border-white/10 bg-white"
-        sandbox="allow-scripts allow-popups allow-downloads"
-      />
+      <Card style={{ padding: 0, overflow: "hidden" }}>
+        <iframe
+          src={fileUrl}
+          title={report.title}
+          className="viewer__frame"
+          sandbox="allow-scripts allow-popups allow-downloads"
+        />
+      </Card>
     </div>
   );
 }

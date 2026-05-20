@@ -1,0 +1,150 @@
+/* ============================================================
+   urayf — Form fields — brand system Part 7 (LOCKED)
+   Tokens only: var(--color-*), var(--radius-*), var(--space-*),
+   var(--text-*), var(--font-*), var(--tracking-*), var(--duration-*),
+   var(--ease-*). No raw values.
+
+   A field is a recess you write into — an inset well. Same edge
+   language as the dark secondary button: recessed border, faint
+   fill, no lit lines.
+   ============================================================ */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);                 /* label-to-field 5px (Part 7) */
+}
+
+/* ---- LABEL — sits above the field, never a placeholder-as-label ---- */
+.field__label {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-regular);   /* label reads lighter than the input content */
+  letter-spacing: var(--tracking-label);     /* +0.04em */
+  color: var(--color-text-muted);            /* muted — distinct from text-primary content */
+}
+
+/* "(optional)" tag — urayf marks the exception, not the rule (Part 7) */
+.field__optional {
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-faint);
+}
+
+/* ---- TEXT FIELD — inset well: surface-sunk fill, line border ---- */
+.field__input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 42px;
+  padding: 0 var(--space-3);                 /* 13px */
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);           /* 5px */
+  background-color: var(--color-surface-sunk);  /* the recess you write into */
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);               /* 16px */
+  font-weight: var(--font-weight-regular);   /* Spline Sans 400 */
+  -webkit-appearance: none;
+  appearance: none;
+  transition:
+    border-color var(--duration-quick) var(--ease-default),
+    box-shadow   160ms                 var(--ease-focus);
+}
+
+/* Placeholder — text-faint. (The "filled" state needs no rule: with
+   content the text simply resolves to text-primary, border stays line.) */
+.field__input::placeholder {
+  color: var(--color-text-faint);
+}
+
+/* hover — border lifts to text-muted (not while focused or errored) */
+.field__input:hover:not(:disabled):not(:focus):not([aria-invalid="true"]) {
+  border-color: var(--color-text-muted);
+}
+
+/* focus — the inked-seal in TEXT-PRIMARY: the 1px border travels to
+   2px over 160ms ease-out (inset shadow adds the pixel, no shift).
+   A field is not a reserved gold use (Part 7). */
+.field__input:focus-visible {
+  outline: none;
+  border-color: var(--color-text-primary);
+  box-shadow: inset 0 0 0 1px var(--color-text-primary);
+}
+
+/* error — border swaps to accent-red. No glow, no icon — just the
+   border. While focused the inked-seal travels in accent-red. */
+.field__input[aria-invalid="true"] {
+  border-color: var(--color-accent-red);
+}
+.field__input[aria-invalid="true"]:focus-visible {
+  border-color: var(--color-accent-red);
+  box-shadow: inset 0 0 0 1px var(--color-accent-red);
+}
+
+/* disabled — fill flattened off the well, border + text -> text-faint */
+.field__input:disabled {
+  background-color: var(--color-surface-raised);   /* flattened — no longer sunk */
+  border-color: var(--color-text-faint);
+  color: var(--color-text-faint);
+  cursor: not-allowed;
+}
+.field__input:disabled::placeholder {
+  color: var(--color-text-faint);
+}
+
+/* ---- ERROR MESSAGE — one plain line below, accent-red, caption size ---- */
+.field__error {
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);            /* 10px */
+  line-height: var(--leading-body);
+  color: var(--color-accent-red);
+}
+
+/* ---- SELECT — same well as the text field + a chevron (Part 7) ---- */
+.field__select-wrap {
+  position: relative;
+}
+.field__select-wrap::after {
+  content: "";
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -6px;
+  border-right: 1.5px solid var(--color-text-muted);
+  border-bottom: 1.5px solid var(--color-text-muted);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+.field__select {
+  /* uses .field__input for the well; .field__input already sets
+     appearance:none, so the native chevron is gone — leave room
+     for the CSS chevron above */
+  padding-right: var(--space-5);
+  cursor: pointer;
+}
+
+/* ---- FILE INPUT — well label + a secondary-button-style picker ---- */
+.field__file {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--color-text-muted);
+}
+.field__file::file-selector-button {
+  margin-right: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-text-muted);
+  border-radius: var(--radius-md);
+  background: none;
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: border-color var(--duration-quick) var(--ease-default);
+}
+.field__file::file-selector-button:hover {
+  border-color: var(--color-text-primary);
+}
+
+/* Reduced motion is handled globally — see globals.css (Part 12). */

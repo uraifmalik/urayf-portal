@@ -1,12 +1,11 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { Button } from "@/components/ui/Button";
+import { TextField } from "@/components/ui/TextField";
+import { toast } from "@/components/ui/toast";
 import { uploadReport } from "@/lib/admin-actions";
 import type { ActionState, Store } from "@/lib/types";
-
-const FIELD =
-  "w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-sm text-white outline-none transition-colors focus:border-white/40";
-const LABEL = "mb-1 block text-xs font-medium text-zinc-400";
 
 export default function UploadReportForm({ stores }: { stores: Store[] }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
@@ -16,67 +15,89 @@ export default function UploadReportForm({ stores }: { stores: Store[] }) {
 
   const noStores = stores.length === 0;
 
+  // The upload result is confirmed with a toast (Part 11).
+  useEffect(() => {
+    if (!state) return;
+    if (state.ok) toast.success(state.message);
+    else toast.error(state.message);
+  }, [state]);
+
   return (
-    <form action={formAction} className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="store_id" className={LABEL}>
+    <form
+      action={formAction}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "var(--space-4)",
+      }}
+    >
+      <div
+        style={{
+          display: "grid",
+          gap: "var(--space-4)",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        }}
+      >
+        {/* Store — select styled as the field well + chevron (Part 7) */}
+        <div className="field">
+          <label className="field__label" htmlFor="store_id">
             Store
           </label>
-          <select id="store_id" name="store_id" required className={FIELD}>
-            <option value="">Select a store…</option>
-            {stores.map((store) => (
-              <option key={store.id} value={store.id}>
-                {store.name}
-              </option>
-            ))}
-          </select>
+          <div className="field__select-wrap">
+            <select
+              id="store_id"
+              name="store_id"
+              required
+              defaultValue=""
+              className="field__input field__select"
+            >
+              <option value="">Select a store…</option>
+              {stores.map((store) => (
+                <option key={store.id} value={store.id}>
+                  {store.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="type" className={LABEL}>
+        {/* Type */}
+        <div className="field">
+          <label className="field__label" htmlFor="type">
             Type
           </label>
-          <select id="type" name="type" required defaultValue="" className={FIELD}>
-            <option value="" disabled>
-              Select a type…
-            </option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-          </select>
+          <div className="field__select-wrap">
+            <select
+              id="type"
+              name="type"
+              required
+              defaultValue=""
+              className="field__input field__select"
+            >
+              <option value="" disabled>
+                Select a type…
+              </option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="report_date" className={LABEL}>
-            Report date
-          </label>
-          <input
-            id="report_date"
-            name="report_date"
-            type="date"
-            required
-            className={FIELD}
-          />
-        </div>
+        <TextField label="Report date" name="report_date" type="date" required />
 
-        <div>
-          <label htmlFor="title" className={LABEL}>
-            Title
-          </label>
-          <input
-            id="title"
-            name="title"
-            type="text"
-            required
-            placeholder="Daily Sales — 17 May 2026"
-            className={FIELD}
-          />
-        </div>
+        <TextField
+          label="Title"
+          name="title"
+          type="text"
+          required
+          placeholder="Daily Sales — 17 May 2026"
+        />
       </div>
 
-      <div>
-        <label htmlFor="file" className={LABEL}>
+      {/* Report file */}
+      <div className="field">
+        <label className="field__label" htmlFor="file">
           Report file (HTML)
         </label>
         <input
@@ -85,33 +106,34 @@ export default function UploadReportForm({ stores }: { stores: Store[] }) {
           type="file"
           accept=".html,text/html"
           required
-          className="block w-full text-sm text-zinc-400 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:text-white hover:file:bg-white/20"
+          className="field__file"
         />
       </div>
 
-      {state && (
-        <p
-          className={`rounded-lg px-3 py-2 text-xs ${
-            state.ok
-              ? "bg-emerald-500/10 text-emerald-300"
-              : "bg-amber-500/10 text-amber-300"
-          }`}
-        >
-          {state.message}
-        </p>
-      )}
-
-      <div className="flex items-center gap-3">
-        <button
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "var(--space-3)",
+        }}
+      >
+        <Button
           type="submit"
-          disabled={pending || noStores}
-          className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-zinc-200 disabled:opacity-50"
+          rank="primary"
+          loading={pending}
+          disabled={noStores}
         >
-          {pending ? "Uploading…" : "Upload report"}
-        </button>
+          Upload report
+        </Button>
         {noStores && (
-          <span className="text-xs text-zinc-500">
-            Add a store first to enable uploads.
+          <span
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: "var(--text-caption)",
+              color: "var(--color-text-muted)",
+            }}
+          >
+            Add a store before uploading a report.
           </span>
         )}
       </div>

@@ -1,0 +1,158 @@
+/* ============================================================
+   urayf — design tokens
+   ------------------------------------------------------------
+   Step 1 of applying the brand system to the portal: the token
+   layer only. Every value here is taken from the locked brand
+   system — nothing invented, nothing interpolated.
+
+   Spec sources
+     Part 2   Color       — color tokens, both themes
+     Part 3   Typography  — font families, type scale, line-height,
+                            letter-spacing, font weights
+     Part 4   Spacing     — spacing scale, corner radii
+     Part 5   Elevation   — floating + modal shadows, modal scrim
+     Part 12  Motion      — duration scale, easing curves
+
+   Theming (Part 1)
+     Light is the default — carried by :root and
+     [data-theme="light"]. [data-theme="dark"] swaps the set.
+     Components reference token NAMES only — never raw hex.
+   ============================================================ */
+
+/* ---- Theme-independent -------------------------------------
+   Type, space, radii and motion are one value set across both
+   themes; only color and elevation change with the theme. */
+:root {
+
+  /* Font families — Part 3. Fraunces speaks, Spline Sans organises.
+     Wired to the real fonts loaded by next/font in app/layout.tsx
+     (--font-fraunces / --font-spline-sans), each followed by a
+     fallback stack. */
+  --font-display:  var(--font-fraunces), Georgia, serif;
+  --font-ui:       var(--font-spline-sans), -apple-system, sans-serif;
+
+  /* Type scale — Part 3
+     Pure golden ratio (phi 1.618) from a protected 16px anchor. */
+  --text-caption:  10px;   /* peripheral only — timestamps, ticks, fine print */
+  --text-body:     16px;   /* all reading — reports, sustained text, table data */
+  --text-heading:  26px;   /* section + page headings */
+  --text-display:  42px;   /* hero figures, report headline, profit */
+  --text-hero:     68px;   /* urayf.com ONLY — fenced off */
+
+  /* Line-height — Part 3 */
+  --leading-body:     1.6;    /* caption + body — the reading measure */
+  --leading-heading:  1.2;    /* heading */
+  --leading-display:  1.05;   /* display + hero */
+
+  /* Letter-spacing — Part 3 */
+  --tracking-caps:     0.16em;   /* micro caps / eyebrows — spec range +0.16em to +0.20em */
+  --tracking-label:    0.04em;   /* form field labels (Part 7) */
+  --tracking-normal:   0;        /* body / UI */
+  --tracking-display:  -0.02em;  /* display, hero */
+
+  /* Font weights — Part 3. Fraunces 300/400/500, Spline Sans 400/500/600. */
+  --font-weight-light:     300;   /* display (Fraunces) */
+  --font-weight-regular:   400;   /* body, headings, figures */
+  --font-weight-medium:    500;   /* labels, nav */
+  --font-weight-semibold:  600;   /* eyebrows, buttons */
+
+  /* Spacing scale — Part 4
+     The golden ratio in whole pixels — the Fibonacci sequence. */
+  --space-1:   5px;        /* tight — label-to-value, icon-to-text, chip padding */
+  --space-2:   8px;        /* inner — compact padding, small gaps */
+  --space-3:  13px;        /* default — standard padding, list-row gaps */
+  --space-4:  21px;        /* comfortable — card padding, field spacing */
+  --space-5:  34px;        /* section — gaps between cards, block separation */
+  --space-6:  55px;        /* major — section-to-section, page margins */
+
+  /* Corner radii — Part 4
+     Fibonacci, anchored at 3 (3 -> 5 -> 8 -> 13). */
+  --radius-sm:   3px;      /* chips, pills, small controls */
+  --radius-md:   5px;      /* buttons, inputs, small cards */
+  --radius-lg:   8px;      /* cards, panels, the report frame */
+  --radius-xl:  13px;      /* modals, large containers */
+
+  /* Motion durations — Part 12
+     Three speeds, no others. */
+  --duration-quick:     120ms;    /* small state changes — hover, warming, checkbox fill */
+  --duration-moderate:  240ms;    /* entering / leaving — toast, menu, toggle knob */
+  --duration-slow:     4200ms;    /* skeleton shimmer — full back-and-forth cycle (Part 11) */
+
+  /* Motion easing — Part 12
+     One default curve plus two locked exceptions. */
+  --ease-default:  cubic-bezier(0.2, 0, 0.2, 1);     /* almost everything — gentle ease-out */
+  --ease-shimmer:  cubic-bezier(0.45, 0, 0.55, 1);   /* shimmer sweep — slow pendulum (Part 11) */
+  --ease-focus:    ease-out;                         /* the inked-seal focus stroke (Part 6) */
+
+  /* Surface lift — the documented method for hover lift.
+     Lifted surfaces = the surface color mixed toward white by
+     --lift-amount; the brand spec defines lift as a step, not a
+     fixed color, so this is a single named amount, not a one-off
+     token per surface. Usage:
+       color-mix(in srgb, var(--color-surface-raised), white var(--lift-amount)) */
+  --lift-amount:  6%;
+}
+
+/* ---- Light theme — DEFAULT ---------------------------------
+   "Brown Qur'an" — soft parchment. Carried by :root so it
+   applies with no attribute set. */
+:root,
+[data-theme="light"] {
+
+  /* Base palette — Part 2 */
+  --color-paper:           #EAE4D6;   /* soft parchment ground, flat */
+  --color-surface-raised:  #F3EFE7;
+  --color-surface-sunk:    #E0D7C2;
+  --color-line:            #C5BBAB;
+  --color-line-soft:       #D7CFC1;
+  --color-text-primary:    #5A4632;   /* sepia ink — body / reading */
+  --color-text-muted:      #918270;
+  --color-text-faint:      #B0A594;
+  /* mark — the one loud color; reserved for exactly four uses (Part 2):
+     logo icon · client name · profit number · primary button */
+  --color-mark:            #9F6F2C;   /* bronze */
+  --color-mark-pressed:    #835B24;   /* bronze, lightness -7 — primary button active (Part 6) */
+  --color-accent-red:      #A8432E;   /* short / negative */
+  --color-accent-green:    #6B6B35;   /* over / positive */
+
+  /* Gold-derived — Part 2, calculated from --color-mark */
+  --color-gold-hover:      #865C21;   /* lightness -7 — deeper, pops on light */
+  --color-gold-wash:       #E0D4BE;   /* bronze over paper @14% — halo / selected bg */
+  --color-gold-wash-line:  #D4C1A3;   /* bronze over paper @30% — washed-element border */
+
+  /* Elevation — Part 5, tinted with the paper's own darkness */
+  --shadow-l2:  0 13px 34px rgba(74, 56, 38, 0.40);   /* L2 floating — dropdowns, popovers */
+  --shadow-l3:  0 21px 55px rgba(74, 56, 38, 0.52);   /* L3 modal — dialogs */
+  --scrim:      rgba(74, 56, 38, 0.32);               /* dim behind L3 modals */
+}
+
+/* ---- Dark theme --------------------------------------------
+   "Blue Qur'an" — indigo. [data-theme="dark"] swaps the set. */
+[data-theme="dark"] {
+
+  /* Base palette — Part 2 */
+  --color-paper:           #16233F;   /* indigo ground, flat in portal */
+  --color-surface-raised:  #1F3157;
+  --color-surface-sunk:    #0F1A30;
+  --color-line:            #444D60;
+  --color-line-soft:       #2F3A51;
+  --color-text-primary:    #E9E4D6;   /* warm off-white — body / reading */
+  --color-text-muted:      #999B9D;
+  --color-text-faint:      #6A707B;
+  /* mark — the one loud color; reserved for exactly four uses (Part 2):
+     logo icon · client name · profit number · primary button */
+  --color-mark:            #EFC65E;   /* leaf gold */
+  --color-mark-pressed:    #ECBB3E;   /* leaf gold, lightness -7 — primary button active (Part 6) */
+  --color-accent-red:      #B0463B;   /* short / negative */
+  --color-accent-green:    #5C8567;   /* over / positive */
+
+  /* Gold-derived — Part 2, calculated from --color-mark */
+  --color-gold-hover:      #F2D17E;   /* lightness +7 — brighter, pops on dark */
+  --color-gold-wash:       #343A43;   /* gold over paper @14% — halo / selected bg */
+  --color-gold-wash-line:  #575448;   /* gold over paper @30% — washed-element border */
+
+  /* Elevation — Part 5, indigo-black, never grey */
+  --shadow-l2:  0 13px 34px rgba(5, 9, 20, 0.78);    /* L2 floating — dropdowns, popovers */
+  --shadow-l3:  0 21px 55px rgba(5, 9, 20, 0.90);    /* L3 modal — dialogs */
+  --scrim:      rgba(7, 10, 22, 0.66);               /* dim behind L3 modals */
+}

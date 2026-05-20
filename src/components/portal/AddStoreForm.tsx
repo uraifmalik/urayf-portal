@@ -1,6 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { Button } from "@/components/ui/Button";
+import { TextField } from "@/components/ui/TextField";
+import { toast } from "@/components/ui/toast";
 import { addStore } from "@/lib/admin-actions";
 import type { ActionState } from "@/lib/types";
 
@@ -10,34 +13,35 @@ export default function AddStoreForm() {
     null,
   );
 
-  return (
-    <div className="space-y-2">
-      <form action={formAction} className="flex flex-wrap gap-2">
-        <input
-          name="name"
-          type="text"
-          required
-          placeholder="New store name"
-          className="min-w-48 flex-1 rounded-lg border border-white/10 bg-black px-3 py-2 text-sm text-white outline-none transition-colors focus:border-white/40"
-        />
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-lg border border-white/15 px-4 py-2 text-sm text-zinc-200 transition-colors hover:border-white/40 hover:text-white disabled:opacity-50"
-        >
-          {pending ? "Adding…" : "Add store"}
-        </button>
-      </form>
+  // The result is confirmed with a toast (Part 11).
+  useEffect(() => {
+    if (!state) return;
+    if (state.ok) toast.success(state.message);
+    else toast.error(state.message);
+  }, [state]);
 
-      {state && (
-        <p
-          className={`text-xs ${
-            state.ok ? "text-emerald-300" : "text-amber-300"
-          }`}
-        >
-          {state.message}
-        </p>
-      )}
-    </div>
+  return (
+    <form action={formAction}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          gap: "var(--space-2)",
+        }}
+      >
+        <div style={{ flex: 1, minWidth: "200px" }}>
+          <TextField
+            label="Store name"
+            name="name"
+            type="text"
+            required
+            placeholder="New store name"
+          />
+        </div>
+        <Button type="submit" rank="secondary" loading={pending}>
+          Add store
+        </Button>
+      </div>
+    </form>
   );
 }

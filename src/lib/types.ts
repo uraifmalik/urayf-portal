@@ -1,5 +1,7 @@
 export type ReportType = "daily" | "weekly" | "monthly";
 
+export type Plan = "standard" | "premium" | "max";
+
 export type Store = {
   id: string;
   name: string;
@@ -10,8 +12,16 @@ export type Profile = {
   id: string;
   email: string;
   full_name: string | null;
+  /** Exact greeting for this client, set manually — never inferred. */
+  display_greeting: string | null;
   store_id: string | null;
   is_admin: boolean;
+  /** Subscription tier; null = no plan assigned. */
+  plan: Plan | null;
+  /** Custom monthly rate in USD (overrides the standard plan price). */
+  plan_rate_override: number | null;
+  /** Whether this user has been shown the first-login welcome modal. */
+  has_seen_welcome: boolean;
   created_at?: string;
 };
 

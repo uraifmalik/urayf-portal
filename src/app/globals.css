@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
@@ -13,4 +14,41 @@ body {
 body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   Reduced motion — brand system Part 12.
+   Honored automatically from the device preference, and
+   overridable by the sidebar Motion toggle, which sets
+   data-motion="full" | "reduced" on <html>.
+
+   Reduced: looping/decorative animation stops, transitions
+   collapse to near-instant fades. The in-button spinner is
+   exempt — it is a functional mid-action indicator, kept
+   (slowed), never frozen.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion="full"]) *,
+  html:not([data-motion="full"]) *::before,
+  html:not([data-motion="full"]) *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 80ms !important;
+  }
+  html:not([data-motion="full"]) .btn__spinner {
+    animation-duration: 1200ms !important;
+    animation-iteration-count: infinite !important;
+  }
+}
+
+[data-motion="reduced"] *,
+[data-motion="reduced"] *::before,
+[data-motion="reduced"] *::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 80ms !important;
+}
+[data-motion="reduced"] .btn__spinner {
+  animation-duration: 1200ms !important;
+  animation-iteration-count: infinite !important;
 }

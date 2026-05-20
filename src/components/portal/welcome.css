@@ -1,0 +1,122 @@
+/* ============================================================
+   First-login welcome modal — L3 floating surface over a scrim.
+   Tokens only. The two content blocks (ask / done) share one
+   grid cell and fade between via opacity. The progress bar grows
+   0 → 100% over 1.0s with --ease-default deceleration.
+   ============================================================ */
+
+.welcome-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background-color: var(--scrim);
+  animation: welcome-scrim-in var(--duration-moderate) var(--ease-default);
+}
+.welcome-scrim[data-phase="closing"] {
+  animation: welcome-scrim-out 300ms var(--ease-default) forwards;
+}
+
+.welcome {
+  width: 100%;
+  max-width: 440px;
+  padding: var(--space-5);
+  background-color: var(--color-surface-raised);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-l3);
+  display: grid;                         /* ask + done share grid cell */
+  animation: welcome-in var(--duration-moderate) var(--ease-default);
+}
+/* dark cards use the cut-groove edge (Part 5) */
+[data-theme="dark"] .welcome {
+  border-color: var(--color-surface-sunk);
+}
+.welcome[data-phase="closing"] {
+  animation: welcome-out 300ms var(--ease-default) forwards;
+}
+
+/* the two content blocks stack in a single grid cell and crossfade */
+.welcome__ask,
+.welcome__done {
+  grid-area: 1 / 1;
+  transition: opacity 200ms var(--ease-default);
+}
+.welcome__done {
+  opacity: 0;
+  pointer-events: none;
+}
+.welcome[data-phase="writing"] .welcome__ask,
+.welcome[data-phase="closing"] .welcome__ask {
+  opacity: 0;
+  pointer-events: none;
+}
+.welcome[data-phase="writing"] .welcome__done,
+.welcome[data-phase="closing"] .welcome__done {
+  opacity: 1;
+}
+
+.welcome__question,
+.welcome__greeting {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--text-heading);
+  line-height: var(--leading-heading);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-primary);
+}
+
+.welcome__field {
+  margin-top: var(--space-4);
+}
+
+.welcome__actions {
+  margin-top: var(--space-4);
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+/* progress bar — 3px tall, gradient mark-pressed → mark */
+.welcome__bar-track {
+  margin-top: var(--space-4);
+  height: 3px;
+  width: 100%;
+  background-color: var(--color-surface-sunk);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.welcome__bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(
+    90deg,
+    var(--color-mark-pressed),
+    var(--color-mark)
+  );
+  border-radius: var(--radius-sm);
+  transition: width 1000ms var(--ease-default);   /* ease-out, 1.0s */
+}
+.welcome[data-phase="writing"] .welcome__bar,
+.welcome[data-phase="closing"] .welcome__bar {
+  width: 100%;
+}
+
+@keyframes welcome-scrim-in {
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes welcome-scrim-out {
+  from { opacity: 1; } to { opacity: 0; }
+}
+@keyframes welcome-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes welcome-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: scale(0.98); }
+}

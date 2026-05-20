@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import AddStoreForm from "@/components/portal/AddStoreForm";
-import ReportTypeBadge from "@/components/portal/ReportTypeBadge";
 import UploadReportForm from "@/components/portal/UploadReportForm";
+import { Card } from "@/components/ui/Card";
+import { TypePill } from "@/components/ui/Pill";
 import { getCurrentUser } from "@/lib/auth";
 import { getProfiles, getReports, getStores } from "@/lib/data";
+import "./admin.css";
 
 export const metadata: Metadata = {
-  title: "Admin — Urayf Portal",
+  title: "Admin — urayf portal",
+};
+
+const TYPE_LABEL: Record<string, string> = {
+  daily: "Daily",
+  weekly: "Weekly",
+  monthly: "Monthly",
 };
 
 export default async function AdminPage() {
@@ -24,62 +32,58 @@ export default async function AdminPage() {
     stores.find((s) => s.id === id)?.name ?? "—";
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold text-white">Admin</h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          Upload reports and manage stores and client accounts.
-        </p>
-      </div>
+    <div className="admin">
+      <h1 className="admin__heading">Admin</h1>
 
-      {/* Upload a report ---------------------------------------------- */}
-      <section className="rounded-xl border border-white/5 bg-zinc-900">
-        <div className="border-b border-white/5 px-5 py-4">
-          <h2 className="font-medium text-white">Upload a report</h2>
-          <p className="mt-0.5 text-xs text-zinc-500">
-            The HTML file is delivered to the selected store&apos;s portal.
-          </p>
+      {/* Upload a report --------------------------------------------- */}
+      <Card style={{ padding: 0 }}>
+        <div className="panel__head">
+          <div className="panel__heading-text">
+            <h2 className="panel__title">Upload a report</h2>
+            <p className="panel__intro">
+              The HTML file is delivered to the selected store&apos;s portal.
+            </p>
+          </div>
         </div>
-        <div className="p-5">
+        <div className="panel__body">
           <UploadReportForm stores={stores} />
         </div>
-      </section>
+      </Card>
 
-      {/* Stores ------------------------------------------------------- */}
-      <section className="overflow-hidden rounded-xl border border-white/5 bg-zinc-900">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 px-5 py-4">
-          <h2 className="font-medium text-white">
-            Stores <span className="text-zinc-500">({stores.length})</span>
-          </h2>
+      {/* Stores ------------------------------------------------------ */}
+      <Card style={{ padding: 0 }}>
+        <div className="panel__head">
+          <div className="panel__heading-text">
+            <h2 className="panel__title">
+              Stores <span className="panel__count">({stores.length})</span>
+            </h2>
+          </div>
           <AddStoreForm />
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="table-scroll">
+          <table className="admin-table">
             <thead>
-              <tr className="border-b border-white/5 text-left text-xs uppercase tracking-wide text-zinc-500">
-                <th className="px-5 py-3 font-medium">Store</th>
-                <th className="px-5 py-3 font-medium">Reports</th>
-                <th className="px-5 py-3 font-medium">Added</th>
+              <tr>
+                <th>Store</th>
+                <th className="admin-table__num">Reports</th>
+                <th>Added</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody>
               {stores.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={3}
-                    className="px-5 py-6 text-center text-zinc-500"
-                  >
+                  <td colSpan={3} className="admin-table__empty">
                     No stores yet.
                   </td>
                 </tr>
               ) : (
                 stores.map((store) => (
                   <tr key={store.id}>
-                    <td className="px-5 py-3 text-white">{store.name}</td>
-                    <td className="px-5 py-3 text-zinc-400">
+                    <td className="admin-table__primary">{store.name}</td>
+                    <td className="admin-table__num">
                       {reports.filter((r) => r.store_id === store.id).length}
                     </td>
-                    <td className="px-5 py-3 text-zinc-400">
+                    <td>
                       {new Date(store.created_at).toLocaleDateString()}
                     </td>
                   </tr>
@@ -88,101 +92,100 @@ export default async function AdminPage() {
             </tbody>
           </table>
         </div>
-      </section>
+      </Card>
 
       {/* Client accounts --------------------------------------------- */}
-      <section className="overflow-hidden rounded-xl border border-white/5 bg-zinc-900">
-        <div className="border-b border-white/5 px-5 py-4">
-          <h2 className="font-medium text-white">
-            Client accounts{" "}
-            <span className="text-zinc-500">({profiles.length})</span>
-          </h2>
+      <Card style={{ padding: 0 }}>
+        <div className="panel__head">
+          <div className="panel__heading-text">
+            <h2 className="panel__title">
+              Client accounts{" "}
+              <span className="panel__count">({profiles.length})</span>
+            </h2>
+          </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="table-scroll">
+          <table className="admin-table">
             <thead>
-              <tr className="border-b border-white/5 text-left text-xs uppercase tracking-wide text-zinc-500">
-                <th className="px-5 py-3 font-medium">Name</th>
-                <th className="px-5 py-3 font-medium">Email</th>
-                <th className="px-5 py-3 font-medium">Store</th>
-                <th className="px-5 py-3 font-medium">Role</th>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Store</th>
+                <th>Role</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody>
               {profiles.map((profile) => (
                 <tr key={profile.id}>
-                  <td className="px-5 py-3 text-white">
+                  <td className="admin-table__primary">
                     {profile.full_name ?? "—"}
                   </td>
-                  <td className="px-5 py-3 text-zinc-400">{profile.email}</td>
-                  <td className="px-5 py-3 text-zinc-400">
+                  <td>{profile.email}</td>
+                  <td>
                     {profile.is_admin ? "—" : storeName(profile.store_id)}
                   </td>
-                  <td className="px-5 py-3 text-zinc-400">
-                    {profile.is_admin ? "Admin" : "Client"}
-                  </td>
+                  <td>{profile.is_admin ? "Admin" : "Client"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <p className="border-t border-white/5 px-5 py-3 text-xs text-zinc-600">
-          Client accounts are created at sign-up. Assign a client to a store
-          from the Supabase dashboard (see <code>supabase/schema.sql</code>).
+        <p className="panel__note">
+          Client accounts are created in the Supabase Auth panel, then
+          assigned to a store in the dashboard (see{" "}
+          <code>supabase/schema.sql</code>).
         </p>
-      </section>
+      </Card>
 
-      {/* All reports -------------------------------------------------- */}
-      <section className="overflow-hidden rounded-xl border border-white/5 bg-zinc-900">
-        <div className="border-b border-white/5 px-5 py-4">
-          <h2 className="font-medium text-white">
-            All reports <span className="text-zinc-500">({reports.length})</span>
-          </h2>
+      {/* All reports ------------------------------------------------- */}
+      <Card style={{ padding: 0 }}>
+        <div className="panel__head">
+          <div className="panel__heading-text">
+            <h2 className="panel__title">
+              All reports{" "}
+              <span className="panel__count">({reports.length})</span>
+            </h2>
+          </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="table-scroll">
+          <table className="admin-table">
             <thead>
-              <tr className="border-b border-white/5 text-left text-xs uppercase tracking-wide text-zinc-500">
-                <th className="px-5 py-3 font-medium">Title</th>
-                <th className="px-5 py-3 font-medium">Store</th>
-                <th className="px-5 py-3 font-medium">Type</th>
-                <th className="px-5 py-3 font-medium">Report date</th>
-                <th className="px-5 py-3 font-medium">File</th>
+              <tr>
+                <th>Title</th>
+                <th>Store</th>
+                <th>Type</th>
+                <th>Report date</th>
+                <th>File</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody>
               {reports.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={5}
-                    className="px-5 py-6 text-center text-zinc-500"
-                  >
+                  <td colSpan={5} className="admin-table__empty">
                     No reports uploaded yet.
                   </td>
                 </tr>
               ) : (
                 reports.map((report) => (
                   <tr key={report.id}>
-                    <td className="px-5 py-3 text-white">{report.title}</td>
-                    <td className="px-5 py-3 text-zinc-400">
-                      {storeName(report.store_id)}
+                    <td className="admin-table__primary">{report.title}</td>
+                    <td>{storeName(report.store_id)}</td>
+                    <td>
+                      <TypePill>
+                        {TYPE_LABEL[report.type] ?? report.type}
+                      </TypePill>
                     </td>
-                    <td className="px-5 py-3">
-                      <ReportTypeBadge type={report.type} />
-                    </td>
-                    <td className="px-5 py-3 text-zinc-400">
+                    <td>
                       {new Date(report.report_date).toLocaleDateString()}
                     </td>
-                    <td className="px-5 py-3 text-zinc-400">
-                      {report.file_name ?? "—"}
-                    </td>
+                    <td>{report.file_name ?? "—"}</td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
         </div>
-      </section>
+      </Card>
     </div>
   );
 }

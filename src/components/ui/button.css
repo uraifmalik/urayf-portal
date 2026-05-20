@@ -1,0 +1,152 @@
+/* ============================================================
+   urayf — Button — brand system Part 6 (LOCKED FINAL)
+   Tokens only: var(--color-*), var(--radius-*), var(--space-*),
+   var(--font-*), var(--duration-*), var(--ease-*). No raw hex.
+   ('white' below is a CSS keyword, not a hex literal — used by one
+   color-mix for the secondary-dark hover lift the token layer omits.)
+   ============================================================ */
+
+.btn {
+  /* Geometry — Part 6 */
+  box-sizing: border-box;
+  height: 42px;
+  padding: 0 var(--space-4);            /* 21px */
+  border: 1px solid transparent;        /* hairline box — color set per rank */
+  border-radius: var(--radius-md);      /* 5px */
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  /* Type — Part 6: Spline Sans 600, 16px, sentence case */
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-normal);
+  line-height: 1;
+
+  cursor: pointer;
+  user-select: none;
+  -webkit-appearance: none;
+  appearance: none;
+
+  transition:
+    background-color var(--duration-quick) var(--ease-default),
+    color            var(--duration-quick) var(--ease-default),
+    border-color     var(--duration-quick) var(--ease-default),
+    transform        var(--duration-quick) var(--ease-default),
+    box-shadow       160ms                 var(--ease-focus);
+}
+
+/* Active press — every rank dips (Part 6) */
+.btn:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+/* Focus — "the inked seal" (Part 6): the 1px border travels to 2px
+   in the metal over 160ms ease-out, then holds. The inset shadow
+   adds the second pixel so content never shifts. No glow, no ring. */
+.btn:focus-visible {
+  outline: none;
+  border-color: var(--color-mark);
+  box-shadow: inset 0 0 0 1px var(--color-mark);
+}
+
+/* ---- PRIMARY — gold hairline + faint wash, fills solid on hover ---- */
+.btn--primary {
+  background-color: color-mix(in srgb, var(--color-mark) 10%, transparent);
+  border-color: var(--color-mark);
+  color: var(--color-mark);
+}
+.btn--primary:not(:disabled):hover {
+  background-color: var(--color-mark);     /* the match is the reward */
+  color: var(--color-paper);
+}
+.btn--primary:not(:disabled):active {
+  background-color: var(--color-mark-pressed);   /* darker — "pushed in" (Part 6) */
+  color: var(--color-paper);
+}
+
+/* ---- SECONDARY — neutral hairline box, no wash ----
+   Light is the :root default; dark overrides below.
+   THE BORDER LAW: light carries a bare text-muted hairline on
+   parchment; dark recesses into a surface-raised inset. */
+.btn--secondary {
+  background-color: transparent;
+  border-color: var(--color-text-muted);
+  color: var(--color-text-primary);
+}
+.btn--secondary:not(:disabled):hover {
+  background-color: var(--color-surface-raised);
+  border-color: var(--color-text-primary);
+}
+.btn--secondary:not(:disabled):active {
+  background-color: var(--color-surface-sunk);
+  border-color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .btn--secondary {
+  /* Findable inset control — recessed line, no light edge */
+  background-color: var(--color-surface-raised);
+  border-color: var(--color-line);
+}
+[data-theme="dark"] .btn--secondary:not(:disabled):hover {
+  /* lifted surface — the documented hover-lift method (tokens.css) */
+  background-color: color-mix(in srgb, var(--color-surface-raised), white var(--lift-amount));
+  border-color: var(--color-text-muted);
+}
+[data-theme="dark"] .btn--secondary:not(:disabled):active {
+  background-color: var(--color-surface-sunk);
+  border-color: var(--color-text-muted);
+}
+
+/* ---- GHOST — text only, no box at rest ---- */
+.btn--ghost {
+  background-color: transparent;
+  border-color: transparent;            /* reserved so focus adds no shift */
+  color: var(--color-text-muted);
+}
+.btn--ghost:not(:disabled):hover {
+  background-color: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+.btn--ghost:not(:disabled):active {
+  background-color: var(--color-surface-sunk);
+}
+
+/* ---- Disabled — border + text fade to text-faint, bg drops ----
+   Skipped while loading: loading holds the current bg state. */
+.btn:disabled:not([data-loading]) {
+  cursor: not-allowed;
+  background-color: transparent;
+  color: var(--color-text-faint);
+  transform: none;
+}
+.btn--primary:disabled:not([data-loading]),
+.btn--secondary:disabled:not([data-loading]) {
+  border-color: var(--color-text-faint);
+}
+
+/* ---- Loading — hold current bg, hide label, centered spinner ---- */
+.btn[data-loading] {
+  cursor: default;
+}
+.btn[data-loading] .btn__label {
+  visibility: hidden;
+}
+.btn__spinner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;       /* spinner inherits the text color */
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 600ms linear infinite;
+}
+
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Reduced motion is handled globally — see globals.css (Part 12). */

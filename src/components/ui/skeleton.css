@@ -1,0 +1,35 @@
+/* ============================================================
+   urayf — Skeleton loading — brand system Part 11. Tokens only.
+   Base = surface-sunk; the traveling highlight is surface-raised.
+   Two locked surface tokens, nothing new. The sweep glides back
+   and forth (alternate) — 4.2s full cycle, ~2.1s each direction,
+   the slow-pendulum easing. Low contrast — barely brighter.
+   ============================================================ */
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-surface-sunk);
+  border-radius: var(--radius-md);
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-sunk) 0%,
+    var(--color-surface-raised) 50%,
+    var(--color-surface-sunk) 100%
+  );
+  /* full cycle = --duration-slow (4.2s); each leg is half that */
+  animation: skeleton-sweep calc(var(--duration-slow) / 2)
+    var(--ease-shimmer) infinite alternate;
+}
+
+@keyframes skeleton-sweep {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}

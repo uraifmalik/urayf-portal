@@ -12,8 +12,8 @@ export async function generateMetadata({
   const report = await getReport(id);
   return {
     title: report
-      ? `${report.title} — Urayf Portal`
-      : "Report not found — Urayf Portal",
+      ? `${report.title} — urayf portal`
+      : "Report unavailable — urayf portal",
   };
 }
 

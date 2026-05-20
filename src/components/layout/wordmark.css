@@ -1,0 +1,10 @@
+/* urayf wordmark — Part 8. Fraunces 500; text-primary, never gold. */
+
+.wordmark {
+  font-family: var(--font-display);          /* Fraunces */
+  font-weight: var(--font-weight-medium);    /* 500 */
+  font-size: 22px;                           /* wordmark — intrinsic size (brand board) */
+  letter-spacing: var(--tracking-display);
+  line-height: 1;
+  color: var(--color-text-primary);
+}

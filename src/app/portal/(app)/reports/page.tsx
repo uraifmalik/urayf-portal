@@ -1,56 +1,59 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import ReportTypeBadge from "@/components/portal/ReportTypeBadge";
-import { getReports, getStores } from "@/lib/data";
+import { Card } from "@/components/ui/Card";
+import { Ledger, type LedgerRow } from "@/components/ui/Ledger";
+import { getReports } from "@/lib/data";
+import type { Report, ReportType } from "@/lib/types";
+import "./reports.css";
 
 export const metadata: Metadata = {
-  title: "Reports — Urayf Portal",
+  title: "Reports — urayf portal",
 };
 
+const TYPE_LABEL: Record<ReportType, string> = {
+  daily: "Daily",
+  weekly: "Weekly",
+  monthly: "Monthly",
+};
+
+/* Three sections stacked, fixed order: daily → weekly → monthly.
+   When a section has no reports, the Ledger renders its empty state
+   with the section-specific wording (Part 11 + Part 13). */
+const SECTIONS: {
+  type: ReportType;
+  title: string;
+  emptyTitle: string;
+}[] = [
+  { type: "daily", title: "Daily reports", emptyTitle: "No daily reports yet." },
+  { type: "weekly", title: "Weekly reports", emptyTitle: "No weekly reports yet." },
+  { type: "monthly", title: "Monthly reports", emptyTitle: "No monthly reports yet." },
+];
+
 export default async function ReportsPage() {
-  const [reports, stores] = await Promise.all([getReports(), getStores()]);
-  const storeName = (id: string) =>
-    stores.find((s) => s.id === id)?.name ?? "Unknown store";
+  const reports = await getReports();
+
+  const toRow = (report: Report): LedgerRow => ({
+    id: report.id,
+    href: `/portal/reports/${report.id}`,
+    pill: TYPE_LABEL[report.type],
+    title: report.title,
+    date: new Date(report.report_date).toLocaleDateString(),
+  });
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-white">Reports</h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          {reports.length} report{reports.length === 1 ? "" : "s"} available to
-          you.
-        </p>
-      </div>
+    <div className="reports">
+      <h1 className="reports__heading">Reports</h1>
 
-      {reports.length === 0 ? (
-        <p className="rounded-xl border border-white/5 bg-zinc-900 px-5 py-12 text-center text-sm text-zinc-500">
-          No reports have been delivered to you yet.
-        </p>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {reports.map((report) => (
-            <Link
-              key={report.id}
-              href={`/portal/reports/${report.id}`}
-              className="group flex flex-col rounded-xl border border-white/5 bg-zinc-900 p-5 transition-colors hover:border-white/20"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <span className="text-xs uppercase tracking-wide text-zinc-500">
-                  {storeName(report.store_id)}
-                </span>
-                <ReportTypeBadge type={report.type} />
-              </div>
-              <h3 className="mt-3 font-medium text-white group-hover:underline">
-                {report.title}
-              </h3>
-              <p className="mt-4 text-xs text-zinc-600">
-                Report date ·{" "}
-                {new Date(report.report_date).toLocaleDateString()}
-              </p>
-            </Link>
-          ))}
-        </div>
-      )}
+      {SECTIONS.map(({ type, title, emptyTitle }) => {
+        const rows = reports.filter((r) => r.type === type).map(toRow);
+        return (
+          <Card key={type} style={{ padding: 0 }}>
+            <div className="reports__section-head">
+              <h2 className="reports__section-title">{title}</h2>
+            </div>
+            <Ledger rows={rows} emptyTitle={emptyTitle} />
+          </Card>
+        );
+      })}
     </div>
   );
 }

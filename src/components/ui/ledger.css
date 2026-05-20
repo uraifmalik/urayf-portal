@@ -1,0 +1,82 @@
+/* ============================================================
+   urayf — Ledger — brand system Part 10 (data display).
+   A vertical list (a ledger): each row is a type pill + title +
+   date, the whole row clickable. Shared by the dashboard's
+   "Latest reports" panel and the reports page. Tokens only.
+   ============================================================ */
+
+.ledger__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* Dividers: line-soft only, no zebra striping (Part 10) */
+.ledger__list > li + li {
+  border-top: 1px solid var(--color-line-soft);
+}
+
+/* Whole row is the link — generous, unhurried padding (Part 10) */
+.ledger__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  text-decoration: none;
+  transition: background-color var(--duration-quick) var(--ease-default);
+}
+.ledger__row:hover {
+  background-color: var(--color-surface-sunk);
+}
+.ledger__row:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-mark);
+}
+
+.ledger__row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.ledger__row-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-medium);    /* content — heavier than the date */
+  color: var(--color-text-primary);
+}
+.ledger__row-sub {
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ledger__row-date {
+  flex-shrink: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--color-text-faint);            /* faint — secondary to the title */
+}
+
+/* Empty state — calm, editorial: a Fraunces line + muted guidance */
+.ledger__empty {
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+.ledger__empty-title {
+  margin: 0;
+  font-family: var(--font-display);          /* Fraunces — editorial */
+  font-weight: var(--font-weight-regular);
+  font-size: var(--text-heading);
+  letter-spacing: var(--tracking-display);
+  color: var(--color-text-primary);
+}
+.ledger__empty-hint {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--color-text-muted);
+}

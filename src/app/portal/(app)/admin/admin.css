@@ -1,0 +1,121 @@
+/* ============================================================
+   Admin — brand system Part 10 (data display). Tokens only.
+   Tables: header caps in text-faint, line-soft dividers, no zebra
+   striping; numbers right-aligned in Fraunces with tabular figures.
+   ============================================================ */
+
+.admin {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.admin__heading {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  color: var(--color-text-primary);
+}
+
+/* ---- Section panel — header strip over a body / table ---- */
+.panel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-line-soft);
+}
+.panel__heading-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.panel__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-heading);
+  line-height: var(--leading-heading);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+.panel__count {
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-muted);
+}
+.panel__intro {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  line-height: var(--leading-body);
+  color: var(--color-text-muted);
+}
+.panel__body {
+  padding: var(--space-4);
+}
+.panel__note {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-line-soft);
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  line-height: var(--leading-body);
+  color: var(--color-text-faint);
+}
+
+/* ---- Table — Part 10 ---- */
+.table-scroll {
+  overflow-x: auto;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+/* Header row — caption caps, text-faint */
+.admin-table th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  white-space: nowrap;
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  border-bottom: 1px solid var(--color-line-soft);
+}
+/* Body cells — text left-aligned, line-soft dividers, no striping */
+.admin-table td {
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);          /* table data = body 16px (Part 3) */
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-line-soft);
+  vertical-align: middle;
+}
+.admin-table tbody tr:first-child td {
+  border-top: 0;
+}
+/* The identity column reads in text-primary */
+.admin-table__primary {
+  color: var(--color-text-primary);
+}
+/* Numbers — right-aligned, tabular figures, set in Fraunces */
+.admin-table__num {
+  text-align: right;
+}
+.admin-table td.admin-table__num {
+  font-family: var(--font-display);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--color-text-primary);
+}
+.admin-table__empty {
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+  color: var(--color-text-muted);
+}

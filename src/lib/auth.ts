@@ -17,8 +17,12 @@ const DEMO_USER: Profile = {
   id: "demo",
   email: "demo@urayf.com",
   full_name: "Demo Admin",
+  display_greeting: "Admin",
   store_id: null,
   is_admin: true,
+  plan: "max",
+  plan_rate_override: 400,
+  has_seen_welcome: true,
 };
 
 export async function getCurrentUser(): Promise<Profile> {
@@ -42,8 +46,12 @@ export async function getCurrentUser(): Promise<Profile> {
       id: user.id,
       email: user.email ?? "",
       full_name: user.email ?? null,
+      display_greeting: null,
       store_id: null,
       is_admin: false,
+      plan: null,
+      plan_rate_override: null,
+      has_seen_welcome: false,
     }
   );
 }

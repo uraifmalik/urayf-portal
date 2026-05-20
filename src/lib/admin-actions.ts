@@ -18,7 +18,8 @@ export async function uploadReport(
   formData: FormData,
 ): Promise<ActionState> {
   const user = await getCurrentUser();
-  if (!user.is_admin) return { ok: false, message: "Not authorized." };
+  if (!user.is_admin)
+    return { ok: false, message: "Only admins can do that." };
 
   const storeId = String(formData.get("store_id") ?? "");
   const type = String(formData.get("type") ?? "");
@@ -36,15 +37,13 @@ export async function uploadReport(
   ) {
     return {
       ok: false,
-      message: "Please fill in every field and choose a file.",
+      message: "Fill in every field and choose a file.",
     };
   }
 
   if (!isSupabaseConfigured) {
-    return {
-      ok: false,
-      message: `Demo mode — "${title}" would be uploaded once Supabase is connected.`,
-    };
+    // A demo action still succeeds — it just doesn't persist.
+    return { ok: true, message: "Demo mode — nothing is saved here." };
   }
 
   const supabase = await createClient();
@@ -65,7 +64,10 @@ export async function uploadReport(
     });
 
   if (uploadError) {
-    return { ok: false, message: `Upload failed: ${uploadError.message}` };
+    return {
+      ok: false,
+      message: "That report couldn't be uploaded. Try again in a moment.",
+    };
   }
 
   const { error: insertError } = await supabase.from("reports").insert({
@@ -81,13 +83,16 @@ export async function uploadReport(
   if (insertError) {
     // Roll back the orphaned file so a failed insert leaves no mess.
     await supabase.storage.from("reports").remove([path]);
-    return { ok: false, message: `Could not save report: ${insertError.message}` };
+    return {
+      ok: false,
+      message: "That report couldn't be saved. Try again in a moment.",
+    };
   }
 
   revalidatePath("/portal/admin");
   revalidatePath("/portal/reports");
   revalidatePath("/portal/dashboard");
-  return { ok: true, message: `"${title}" uploaded.` };
+  return { ok: true, message: "Report uploaded." };
 }
 
 export async function addStore(
@@ -95,22 +100,25 @@ export async function addStore(
   formData: FormData,
 ): Promise<ActionState> {
   const user = await getCurrentUser();
-  if (!user.is_admin) return { ok: false, message: "Not authorized." };
+  if (!user.is_admin)
+    return { ok: false, message: "Only admins can do that." };
 
   const name = String(formData.get("name") ?? "").trim();
-  if (!name) return { ok: false, message: "Store name is required." };
+  if (!name) return { ok: false, message: "Enter a store name." };
 
   if (!isSupabaseConfigured) {
-    return {
-      ok: false,
-      message: `Demo mode — store "${name}" would be created once Supabase is connected.`,
-    };
+    // A demo action still succeeds — it just doesn't persist.
+    return { ok: true, message: "Demo mode — nothing is saved here." };
   }
 
   const supabase = await createClient();
   const { error } = await supabase.from("stores").insert({ name });
-  if (error) return { ok: false, message: error.message };
+  if (error)
+    return {
+      ok: false,
+      message: "That store couldn't be saved. Try again in a moment.",
+    };
 
   revalidatePath("/portal/admin");
-  return { ok: true, message: `Store "${name}" created.` };
+  return { ok: true, message: "Store added." };
 }

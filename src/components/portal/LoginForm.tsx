@@ -4,6 +4,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { isSupabaseConfigured } from "@/lib/config";
 import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { TextField } from "@/components/ui/TextField";
+
+/* Voice spec (Part 13) — the approved login-fail wording. */
+const LOGIN_FAILED =
+  "That email and password don't match. Check both and try again.";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -13,7 +20,7 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(
-    params.get("error") ? "Authentication failed. Please try again." : null,
+    params.get("error") ? LOGIN_FAILED : null,
   );
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +43,7 @@ export default function LoginForm() {
     setLoading(false);
 
     if (signInError) {
-      setError(signInError.message);
+      setError(LOGIN_FAILED);
       return;
     }
 
@@ -45,68 +52,88 @@ export default function LoginForm() {
   }
 
   return (
-    <form
-      onSubmit={onSubmit}
-      className="space-y-4 rounded-2xl border border-white/10 bg-zinc-900 p-6"
-    >
-      {!isSupabaseConfigured && (
-        <p className="rounded-lg bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
-          Demo mode — Supabase is not configured, so any credentials sign you
-          in.
-        </p>
-      )}
+    <Card elevation="raised">
+      <form
+        onSubmit={onSubmit}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "var(--space-4)",
+        }}
+      >
+        {!isSupabaseConfigured && (
+          <p
+            style={{
+              margin: 0,
+              padding: "var(--space-2) var(--space-3)",
+              border: "1px solid var(--color-line-soft)",
+              borderRadius: "var(--radius-md)",
+              fontFamily: "var(--font-ui)",
+              fontSize: "var(--text-caption)",
+              lineHeight: "var(--leading-body)",
+              color: "var(--color-text-muted)",
+            }}
+          >
+            Demo mode — any email and password will sign you in.
+          </p>
+        )}
 
-      <div>
-        <label
-          htmlFor="email"
-          className="mb-1 block text-xs font-medium text-zinc-400"
-        >
-          Email
-        </label>
-        <input
-          id="email"
+        <TextField
+          label="Email"
           type="email"
           autoComplete="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-sm text-white outline-none transition-colors focus:border-white/40"
           placeholder="you@company.com"
         />
-      </div>
 
-      <div>
-        <label
-          htmlFor="password"
-          className="mb-1 block text-xs font-medium text-zinc-400"
-        >
-          Password
-        </label>
-        <input
-          id="password"
+        <TextField
+          label="Password"
           type="password"
           autoComplete="current-password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-lg border border-white/10 bg-black px-3 py-2 text-sm text-white outline-none transition-colors focus:border-white/40"
           placeholder="••••••••"
         />
-      </div>
 
-      {error && <p className="text-xs text-red-400">{error}</p>}
+        {error && (
+          <p
+            role="alert"
+            style={{
+              margin: 0,
+              fontFamily: "var(--font-ui)",
+              fontSize: "var(--text-caption)",
+              lineHeight: "var(--leading-body)",
+              color: "var(--color-accent-red)",
+            }}
+          >
+            {error}
+          </p>
+        )}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-black transition-colors hover:bg-zinc-200 disabled:opacity-60"
-      >
-        {loading ? "Signing in…" : "Sign in"}
-      </button>
+        <Button
+          type="submit"
+          rank="primary"
+          loading={loading}
+          style={{ width: "100%" }}
+        >
+          Sign in
+        </Button>
 
-      <p className="text-center text-xs text-zinc-600">
-        Need access? Contact your Urayf representative.
-      </p>
-    </form>
+        <p
+          style={{
+            margin: 0,
+            textAlign: "center",
+            fontFamily: "var(--font-ui)",
+            fontSize: "var(--text-caption)",
+            color: "var(--color-text-muted)",
+          }}
+        >
+          Need access? Get in touch with urayf
+        </p>
+      </form>
+    </Card>
   );
 }

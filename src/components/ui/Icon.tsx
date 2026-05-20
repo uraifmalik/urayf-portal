@@ -1,0 +1,97 @@
+import type { ReactNode, SVGProps } from "react";
+
+/* urayf icon set (Part 9). Four custom icons, drawn to a 24-unit grid,
+   1.5 uniform stroke, round caps/joins, outline only. Paths are taken
+   verbatim from the brand board. Icons inherit currentColor and are
+   NEVER gold — gold is reserved (Part 2). */
+
+const ICONS: Record<string, ReactNode> = {
+  // Dashboard — a layout of panels (proposed 5th icon; see build notes)
+  dashboard: (
+    <>
+      <rect x="3.5" y="3.5" width="7" height="17" rx="2" />
+      <rect x="13.5" y="3.5" width="7" height="7.5" rx="2" />
+      <rect x="13.5" y="13" width="7" height="7.5" rx="2" />
+    </>
+  ),
+  // Reports — a document leaf with a fine top rule
+  reports: (
+    <>
+      <path d="M7 3.5 H14 L17.5 7 V20 A0.5 0.5 0 0 1 17 20.5 H7 A0.5 0.5 0 0 1 6.5 20 V4 A0.5 0.5 0 0 1 7 3.5 Z" />
+      <path d="M14 3.5 V7 H17.5" />
+      <path d="M9 11.5 H14.5" />
+      <path d="M9 14.5 H14.5" />
+      <path d="M9 17.5 H12" />
+    </>
+  ),
+  // Meetings — a calendar with a single marked day
+  meetings: (
+    <>
+      <rect x="4.5" y="5.5" width="15" height="14" rx="2" />
+      <path d="M4.5 9.5 H19.5" />
+      <path d="M8.5 3.5 V6.5 M15.5 3.5 V6.5" />
+      <circle cx="12" cy="14.5" r="1.6" fill="currentColor" stroke="none" />
+    </>
+  ),
+  // Account — a person: circle + shoulder arc
+  account: (
+    <>
+      <circle cx="12" cy="9" r="3.5" />
+      <path d="M5.5 19.5 A6.5 6.5 0 0 1 18.5 19.5" />
+    </>
+  ),
+  // Admin — a key ("behind the counter")
+  admin: (
+    <>
+      <circle cx="8.5" cy="8.5" r="4" />
+      <path d="M11.3 11.3 L19 19 M16.5 16.5 L18.5 14.5 M14 14 L16 12" />
+    </>
+  ),
+  // Sign out — an arrow leaving a frame (proposed 6th icon; see notes)
+  signout: (
+    <>
+      <path d="M14 4 H6 A2 2 0 0 0 4 6 V18 A2 2 0 0 0 6 20 H14" />
+      <path d="M10 12 H20" />
+      <path d="M16.5 8.5 L20 12 L16.5 15.5" />
+    </>
+  ),
+  // Settings — a gear: hollow hub + six radial teeth at clock positions
+  // 12, 2, 4, 6, 8, 10 (proposed 7th icon; see notes)
+  settings: (
+    <>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 7 L12 3 M16.3 9.5 L19.8 7.5 M16.3 14.5 L19.8 16.5 M12 17 L12 21 M7.7 14.5 L4.2 16.5 M7.7 9.5 L4.2 7.5" />
+    </>
+  ),
+};
+
+export type IconName = keyof typeof ICONS;
+
+export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "name"> {
+  name: IconName;
+  /** Square size in px. Default 24 — the drawing grid. */
+  size?: number;
+}
+
+/**
+ * urayf icon (Part 9). Renders one of the four custom icons; the glyph
+ * inherits the current text color via currentColor — never gold.
+ */
+export function Icon({ name, size = 24, ...rest }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...rest}
+    >
+      {ICONS[name]}
+    </svg>
+  );
+}

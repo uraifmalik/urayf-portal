@@ -1,0 +1,123 @@
+/* ============================================================
+   urayf — Page shell — brand system Part 8 (navigation) + Part 4
+   (layout grid). Sidebar + main content; collapses to a top bar +
+   L3 overlay below 760px. Tokens only.
+   ============================================================ */
+
+.shell {
+  min-height: 100vh;
+  background-color: var(--color-paper);
+  color: var(--color-text-primary);
+}
+
+.shell__layout {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* ---- Sidebar — fixed 233px left column (Part 4) ---- */
+.shell__sidebar {
+  flex-shrink: 0;
+  width: 233px;                           /* Fibonacci — Part 4 */
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  background-color: var(--color-paper);
+  border-right: 1px solid var(--color-line);
+}
+
+/* ---- Main content — 12-col fluid, 1144 max, 55px page margin ---- */
+.shell__main {
+  flex: 1;
+  min-width: 0;
+}
+.shell__content {
+  max-width: 1144px;                      /* Part 4 — calm, not full-bleed */
+  margin: 0 auto;
+  padding: var(--space-6);                /* 55px desktop page margin */
+}
+
+/* Top bar + scrim exist only on mobile */
+.shell__topbar {
+  display: none;
+}
+.shell__scrim {
+  display: none;
+}
+
+/* ============================================================
+   Mobile — below 760px: sidebar collapses to a top bar; the menu
+   slides the sidebar in as an L3 overlay (surface-raised + scrim).
+   ============================================================ */
+@media (max-width: 760px) {
+  .shell__topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-paper);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .shell__menu-btn {
+    display: inline-flex;
+    padding: var(--space-1);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background: none;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: box-shadow 160ms var(--ease-focus);
+  }
+  .shell__menu-btn:focus-visible {
+    outline: none;
+    border-color: var(--color-mark);
+    box-shadow: inset 0 0 0 1px var(--color-mark);
+  }
+
+  /* the sidebar becomes an off-canvas L3 panel */
+  .shell__sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100%;
+    z-index: 50;
+    background-color: var(--color-surface-raised);   /* L3 overlay panel */
+    box-shadow: var(--shadow-l3);
+    transform: translateX(-100%);
+    transition: transform var(--duration-moderate) var(--ease-default);
+  }
+  .shell[data-menu-open] .shell__sidebar {
+    transform: translateX(0);
+  }
+
+  /* On the surface-raised overlay the active well would vanish into
+     the panel, so it steps down to surface-sunk — still a filled
+     well, just sunk rather than raised. (See build notes.) */
+  .shell__sidebar .nav-item--active {
+    background-color: var(--color-surface-sunk);
+  }
+
+  /* the scrim dims the page behind the overlay */
+  .shell__scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background-color: var(--scrim);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-moderate) var(--ease-default);
+  }
+  .shell[data-menu-open] .shell__scrim {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .shell__content {
+    padding: var(--space-4);              /* 21px mobile page margin */
+  }
+}
+
+/* Reduced motion is handled globally — see globals.css (Part 12). */

@@ -1,0 +1,74 @@
+/* ============================================================
+   Dashboard — brand system Part 10 (data display). Tokens only.
+   The ledger itself lives in the shared Ledger component (ledger.css).
+   ============================================================ */
+
+.dash {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.dash__heading {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  color: var(--color-text-primary);
+}
+
+/* ---- Stat cards ---- */
+.dash__stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+@media (min-width: 760px) {
+  .dash__stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Stat figure — CENTER-aligned label + figure (Part 10) */
+.stat {
+  text-align: center;
+}
+.stat__label {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);            /* 10px caps */
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.stat__figure {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-display);          /* Fraunces 400 */
+  font-weight: var(--font-weight-regular);
+  font-size: var(--text-display);            /* all figures one size (Part 10) */
+  line-height: 1;
+  letter-spacing: var(--tracking-display);
+  color: var(--color-text-primary);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* ---- Latest reports panel — header strip above the shared Ledger ---- */
+.ledger__head {
+  display: flex;
+  align-items: center;
+  justify-content: center;                   /* centered within the panel */
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-line-soft);
+}
+.ledger__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-heading);
+  line-height: var(--leading-heading);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}

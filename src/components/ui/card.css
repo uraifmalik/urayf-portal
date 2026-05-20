@@ -1,0 +1,41 @@
+/* ============================================================
+   urayf — Card & elevation — brand system Part 5 (LOCKED FINAL)
+   Tokens only: var(--color-*), var(--radius-*), var(--space-*),
+   var(--shadow-*), var(--scrim). No invented shadow values.
+
+   Depth the manuscript way: separation by SURFACE-STEP and LINE
+   first. Shadow only where something genuinely floats.
+   ============================================================ */
+
+/* ---- Card — surface-raised fill + 1px border ---- */
+.card {
+  background-color: var(--color-surface-raised);
+  border: 1px solid var(--color-line);       /* light — warm hairline */
+  border-radius: var(--radius-lg);           /* 8px — cards / panels */
+  padding: var(--space-4);                   /* 21px */
+}
+
+/* The cut-groove edge — dark cards sit inset in the page, so the
+   border takes the SUNK color, never a lit line. No lit edges on dark. */
+[data-theme="dark"] .card {
+  border-color: var(--color-surface-sunk);
+}
+
+/* ---- L1 raised — surface-step + border only. NO shadow ----
+   This is the bare .card above; cards never carry a shadow. */
+
+/* ---- L2 floating — dropdowns, popovers: the deeper shadow ---- */
+.card--floating {
+  box-shadow: var(--shadow-l2);
+}
+
+/* ---- L3 modal — the dramatic shadow; pair with .card-scrim ---- */
+.card--modal {
+  border-radius: var(--radius-xl);           /* 13px — modals / large containers */
+  box-shadow: var(--shadow-l3);
+}
+
+/* ---- Scrim — dims the page behind an L3 modal ---- */
+.card-scrim {
+  background-color: var(--scrim);
+}

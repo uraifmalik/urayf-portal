@@ -1,0 +1,30 @@
+/* Error state — brand system Part 11. Calm and plain: a Fraunces
+   line stating what happened, one muted line of guidance, and a
+   way to recover. No raw error, no loud banner. Tokens only. */
+
+.errstate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+}
+
+.errstate__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--text-heading);
+  letter-spacing: var(--tracking-display);
+  color: var(--color-text-primary);
+}
+
+.errstate__hint {
+  margin: 0;
+  max-width: 380px;
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--color-text-muted);
+}
