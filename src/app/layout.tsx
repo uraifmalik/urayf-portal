@@ -30,8 +30,9 @@ const splineSans = Spline_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "urayf",
-  description: "urayf — client portal",
+  title: "urayf — business intelligence for owners and franchisees",
+  description:
+    "urayf is a boutique business intelligence firm. Custom-crafted reports for store owners who want to understand their business down to the hour.",
 };
 
 /* Set the theme, motion, and sidebar attributes on <html>

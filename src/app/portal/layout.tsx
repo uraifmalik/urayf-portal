@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Urayf Portal",
-  description: "Urayf client portal",
+  title: "urayf — portal",
+  description: "urayf client portal.",
 };
 
 /**

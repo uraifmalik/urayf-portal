@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Homepage from "@/components/home/Homepage";
 
 export const metadata: Metadata = {
-  title: "Urayf",
-  description: "Urayf",
+  title: "urayf — business intelligence for owners and franchisees",
+  description:
+    "urayf is a boutique business intelligence firm. Custom-crafted reports for store owners who want to understand their business down to the hour.",
 };
 
 /**
