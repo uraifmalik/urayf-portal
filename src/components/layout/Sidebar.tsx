@@ -2,28 +2,34 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Card } from "@/components/ui/Card";
 import { Icon, type IconName } from "@/components/ui/Icon";
-import type { Plan } from "@/lib/types";
+import {
+  SIDEBAR_CYCLE,
+  type SidebarState,
+  useSidebarState,
+} from "@/lib/preferences";
+import type { Plan, Store } from "@/lib/types";
+import { ProfileMenu } from "./ProfileMenu";
 import { Wordmark } from "./Wordmark";
 import "./sidebar.css";
 
-interface NavEntry {
+interface FixedNavEntry {
   href: string;
   label: string;
   icon: IconName;
 }
 
-const BASE_NAV: NavEntry[] = [
-  { href: "/portal/dashboard", label: "Dashboard", icon: "dashboard" },
-  { href: "/portal/reports", label: "Reports", icon: "reports" },
-];
-const ADMIN_NAV: NavEntry = {
+const DASHBOARD_NAV: FixedNavEntry = {
+  href: "/portal/dashboard",
+  label: "Dashboard",
+  icon: "dashboard",
+};
+const ADMIN_NAV: FixedNavEntry = {
   href: "/portal/admin",
   label: "Admin",
   icon: "admin",
 };
-const SETTINGS_NAV: NavEntry = {
+const SETTINGS_NAV: FixedNavEntry = {
   href: "/portal/settings",
   label: "Settings",
   icon: "settings",
@@ -32,10 +38,16 @@ const SETTINGS_NAV: NavEntry = {
 export interface SidebarProps {
   /** Per-client custom greeting; null falls back to "Welcome back." */
   greeting?: string | null;
-  /** Store identity line. Null/empty hides the second line entirely. */
-  storeIdentity: string | null;
+  /** Stores the user is joined to, ordered by display_order ASC. */
+  stores: Store[];
+  /** Profile id — used by the profile menu's sign-out action. */
+  userId: string;
+  /** Email — shown in the profile menu header. */
+  email: string;
   /** Full name — used for the identity block (avatar initials + first name). */
   fullName?: string | null;
+  /** Public URL of the user's avatar image; null falls back to initials. */
+  avatarUrl?: string | null;
   /** Plan label shown in the identity block; null hides the separator + plan. */
   plan?: Plan | null;
   /** Admin nav item shows only for admin users (Part 8). */
@@ -58,21 +70,31 @@ function firstNameOf(name: string | null | undefined): string {
   return name.trim().split(/\s+/)[0] ?? "";
 }
 
+function titleCase(value: string): string {
+  if (!value) return value;
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 /**
- * The portal sidebar (Part 8). Wired to the real routes, the theme
- * + motion preferences, and the per-client identity block. Sign-out
- * lives on the Settings page now; Admin is a regular nav item for
- * admin users.
+ * The portal sidebar (Part 8). Wordmark links to the Dashboard; nav
+ * items: Dashboard → user's stores (in display_order) → [Admin] →
+ * Settings. The client's name is rendered in gold per Part 2 (one of
+ * the four reserved gold uses). The identity block at the bottom is
+ * clickable — see ProfileMenu.
  */
 export function Sidebar({
   greeting,
-  storeIdentity,
+  stores,
+  userId,
+  email,
   fullName,
+  avatarUrl,
   plan,
   isAdmin = false,
   onNavigate,
 }: SidebarProps) {
   const pathname = usePathname();
+  const [sidebarState, setSidebarState] = useSidebarState();
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
@@ -83,67 +105,143 @@ export function Sidebar({
       .join(" ");
   }
 
-  // Nav order: Dashboard, Reports, [Admin], Settings.
-  const navItems: NavEntry[] = isAdmin
-    ? [...BASE_NAV, ADMIN_NAV, SETTINGS_NAV]
-    : [...BASE_NAV, SETTINGS_NAV];
+  function cycle() {
+    const next: SidebarState = SIDEBAR_CYCLE[sidebarState];
+    setSidebarState(next);
+  }
 
   const initials = initialsOf(fullName);
   const firstName = firstNameOf(fullName);
 
   return (
     <nav className="sidebar" aria-label="Portal navigation">
-      {/* 1. logo — wordmark, centered */}
-      <Wordmark className="sidebar__logo" />
+      {/* Collapse toggle — top-right of sidebar (open + rail states).
+          Hidden via CSS on mobile; the mobile menu button takes over. */}
+      <button
+        type="button"
+        className="sidebar__toggle"
+        aria-label={`Sidebar: ${sidebarState}. Click to cycle.`}
+        onClick={cycle}
+      >
+        <Icon name="panel-toggle" size={18} state={sidebarState} />
+      </button>
 
-      {/* 2. greeting + store identity */}
+      {/* 1. logo — wordmark links to Dashboard */}
+      <Link
+        href="/portal/dashboard"
+        className="sidebar__logo-link"
+        aria-label="Dashboard"
+        onClick={onNavigate}
+      >
+        <Wordmark className="sidebar__logo" />
+      </Link>
+
+      {/* 2. greeting — the client's name renders in gold (Part 2).
+          Inline layout: short greetings ("Mr. Malik") fit on one line;
+          longer values wrap naturally to a second line. */}
       <div className="sidebar__identity">
         <p className="sidebar__welcome">
-          {greeting ? `Welcome back, ${greeting}.` : "Welcome back."}
+          {greeting ? (
+            <>
+              <span className="sidebar__welcome-prefix">Welcome,</span>{" "}
+              <span className="sidebar__welcome-name">{greeting}.</span>
+            </>
+          ) : (
+            "Welcome."
+          )}
         </p>
-        {storeIdentity && <p className="sidebar__store">{storeIdentity}</p>}
       </div>
 
-      {/* 3. nav — Admin inlined for admins, Settings always last */}
+      {/* 3. nav — Dashboard, store entries, [Admin], Settings */}
       <div className="sidebar__nav">
-        {navItems.map(({ href, label, icon }) => (
+        <Link
+          href={DASHBOARD_NAV.href}
+          className={navClass(DASHBOARD_NAV.href)}
+          aria-current={isActive(DASHBOARD_NAV.href) ? "page" : undefined}
+          onClick={onNavigate}
+          title={DASHBOARD_NAV.label}
+        >
+          <Icon name={DASHBOARD_NAV.icon} size={18} />
+          <span className="nav-item__label">{DASHBOARD_NAV.label}</span>
+        </Link>
+
+        {stores.map((store) => {
+          const href = `/portal/${store.slug}`;
+          return (
+            <Link
+              key={store.id}
+              href={href}
+              className={navClass(href)}
+              aria-current={isActive(href) ? "page" : undefined}
+              onClick={onNavigate}
+              title={store.name}
+            >
+              <Icon name="reports" size={18} />
+              <span className="nav-item__label">{store.short_name}</span>
+            </Link>
+          );
+        })}
+
+        {isAdmin && (
           <Link
-            key={href}
-            href={href}
-            className={navClass(href)}
-            aria-current={isActive(href) ? "page" : undefined}
+            href={ADMIN_NAV.href}
+            className={navClass(ADMIN_NAV.href)}
+            aria-current={isActive(ADMIN_NAV.href) ? "page" : undefined}
             onClick={onNavigate}
+            title={ADMIN_NAV.label}
           >
-            <Icon name={icon} size={18} />
-            <span>{label}</span>
+            <Icon name={ADMIN_NAV.icon} size={18} />
+            <span className="nav-item__label">{ADMIN_NAV.label}</span>
           </Link>
-        ))}
+        )}
+
+        <Link
+          href={SETTINGS_NAV.href}
+          className={navClass(SETTINGS_NAV.href)}
+          aria-current={isActive(SETTINGS_NAV.href) ? "page" : undefined}
+          onClick={onNavigate}
+          title={SETTINGS_NAV.label}
+        >
+          <Icon name={SETTINGS_NAV.icon} size={18} />
+          <span className="nav-item__label">{SETTINGS_NAV.label}</span>
+        </Link>
       </div>
 
-      {/* 4. strategy-meeting card */}
-      <Card elevation="raised" className="sidebar__meeting">
-        <p className="meeting__eyebrow">Next meeting</p>
-        <p className="meeting__date">May 24</p>
-        <p className="meeting__detail">10:00 AM with urayf</p>
-      </Card>
-
-      {/* 5. bottom cluster — pushed down — identity only */}
+      {/* 4. bottom cluster — clickable identity opens the profile menu */}
       <div className="sidebar__bottom">
         {fullName && (
-          <div className="sidebar__user">
-            <span className="sidebar__avatar" aria-hidden="true">
-              {initials}
-            </span>
-            <span className="sidebar__user-name">{firstName}</span>
-            {plan && (
-              <>
-                <span className="sidebar__user-sep" aria-hidden="true">
-                  ·
-                </span>
-                <span className="sidebar__user-plan">{plan}</span>
-              </>
-            )}
-          </div>
+          <ProfileMenu
+            userId={userId}
+            email={email}
+            trigger={
+              <div className="sidebar__user">
+                {avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={avatarUrl}
+                    alt=""
+                    aria-hidden="true"
+                    className="sidebar__avatar sidebar__avatar--image"
+                  />
+                ) : (
+                  <span className="sidebar__avatar" aria-hidden="true">
+                    {initials}
+                  </span>
+                )}
+                <span className="sidebar__user-name">{firstName}</span>
+                {plan && (
+                  <>
+                    <span className="sidebar__user-sep" aria-hidden="true">
+                      ·
+                    </span>
+                    <span className="sidebar__user-plan">
+                      {titleCase(plan)}
+                    </span>
+                  </>
+                )}
+              </div>
+            }
+          />
         )}
       </div>
     </nav>

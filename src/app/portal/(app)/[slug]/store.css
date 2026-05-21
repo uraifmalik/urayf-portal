@@ -1,16 +1,17 @@
 /* ============================================================
-   Reports list — brand system Part 10. The reports list is a
-   vertical LEDGER (the shared Ledger component, ledger.css).
-   This file holds only the page heading + layout. Tokens only.
+   Store-scoped reports list — daily / weekly / monthly sections
+   for the store identified by the URL slug, titled with the
+   store name.
+   Tokens only.
    ============================================================ */
 
-.reports {
+.store-reports {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
 }
 
-.reports__heading {
+.store-reports__heading {
   margin: 0;
   text-align: center;
   font-family: var(--font-display);
@@ -21,15 +22,12 @@
   color: var(--color-text-primary);
 }
 
-/* Section panel header — same treatment as the dashboard "Latest
-   reports" panel: Fraunces, --text-heading, centered, with a
-   line-soft divider below. */
-.reports__section-head {
+.store-reports__section-head {
   padding: var(--space-4);
   border-bottom: 1px solid var(--color-line-soft);
   text-align: center;
 }
-.reports__section-title {
+.store-reports__section-title {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-heading);

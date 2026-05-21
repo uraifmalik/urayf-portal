@@ -15,7 +15,7 @@ const TYPE_LABEL: Record<string, string> = {
  * Renders an uploaded HTML report inline.
  *
  * The file is loaded as the <iframe> source from our own route handler
- * (`/portal/reports/[id]/file`), which always serves it as `text/html` so
+ * (`/portal/[slug]/[reportId]/file`), which always serves it as `text/html` so
  * it renders as a page. The iframe is sandboxed so the report's own CSS/JS
  * cannot leak into or break the portal chrome.
  *
@@ -29,7 +29,11 @@ export default function ReportViewer({
   report: Report;
   store: Store | null;
 }) {
-  const fileUrl = `/portal/reports/${report.id}/file`;
+  const fileUrl = store
+    ? `/portal/${store.slug}/${report.id}/file`
+    : `/portal/dashboard`;
+  const backHref = store ? `/portal/${store.slug}` : "/portal/dashboard";
+  const backLabel = store ? `← Back to ${store.name}` : "← Back to dashboard";
 
   const reportDate = new Date(report.report_date).toLocaleDateString(
     undefined,
@@ -38,8 +42,8 @@ export default function ReportViewer({
 
   return (
     <div className="viewer">
-      <Link href="/portal/reports" className="viewer__back">
-        ← Back to reports
+      <Link href={backHref} className="viewer__back">
+        {backLabel}
       </Link>
 
       <div className="viewer__head">

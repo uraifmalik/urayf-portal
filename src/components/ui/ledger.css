@@ -32,6 +32,14 @@
   box-shadow: inset 0 0 0 2px var(--color-mark);
 }
 
+/* Stacked pills (store + type) — keep them tight together */
+.ledger__row-pills {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
 .ledger__row-main {
   flex: 1;
   min-width: 0;

@@ -10,10 +10,10 @@ export default function ReportNotFound() {
         It may have been moved, or it isn&apos;t part of your portal.
       </p>
       <Link
-        href="/portal/reports"
+        href="/portal/dashboard"
         className="inline-block text-sm text-zinc-300 underline transition-colors hover:text-white"
       >
-        Back to reports
+        Back to dashboard
       </Link>
     </div>
   );

@@ -1,12 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 const THEME_KEY = "urayf-theme";
 const MOTION_KEY = "urayf-motion";
+const SIDEBAR_KEY = "urayf-sidebar";
 
 export type ThemePreference = "light" | "dark";
 export type MotionPreference = "full" | "reduced";
+export type SidebarState = "open" | "rail" | "hidden";
+
+export const SIDEBAR_CYCLE: Record<SidebarState, SidebarState> = {
+  open: "rail",
+  rail: "hidden",
+  hidden: "open",
+};
 
 export interface Preferences {
   theme: ThemePreference;
@@ -64,4 +72,56 @@ export function usePreferences(): Preferences {
   }
 
   return { theme, motion, setTheme, setMotion };
+}
+
+/* ============================================================
+   Sidebar state — module-scoped external store.
+   The hook is called from BOTH AppShell (to decide whether to mount
+   the floating toggle) and Sidebar (to drive the in-sidebar toggle).
+   Both must observe the same value, so we cannot use per-component
+   useState; we use useSyncExternalStore over a tiny pub-sub instead.
+   The DOM attribute on <html> is the source of truth — the inline
+   script in app/layout.tsx sets it before first paint.
+   ============================================================ */
+
+const sidebarListeners = new Set<() => void>();
+function subscribeSidebar(cb: () => void) {
+  sidebarListeners.add(cb);
+  return () => {
+    sidebarListeners.delete(cb);
+  };
+}
+function emitSidebar() {
+  sidebarListeners.forEach((cb) => cb());
+}
+
+function readSidebarFromDOM(): SidebarState {
+  if (typeof document === "undefined") return "open";
+  const v = document.documentElement.getAttribute("data-sidebar");
+  return v === "rail" || v === "hidden" || v === "open" ? v : "open";
+}
+
+/**
+ * Read the persisted sidebar collapse state ("open" | "rail" | "hidden"),
+ * keep `<html data-sidebar>` in sync, and persist on change. Mobile
+ * ignores this state — see shell.css.
+ */
+export function useSidebarState(): [SidebarState, (next: SidebarState) => void] {
+  const state = useSyncExternalStore<SidebarState>(
+    subscribeSidebar,
+    readSidebarFromDOM,
+    () => "open",
+  );
+
+  function update(next: SidebarState) {
+    document.documentElement.setAttribute("data-sidebar", next);
+    try {
+      localStorage.setItem(SIDEBAR_KEY, next);
+    } catch {
+      /* storage unavailable — preference still applies this session */
+    }
+    emitSidebar();
+  }
+
+  return [state, update];
 }

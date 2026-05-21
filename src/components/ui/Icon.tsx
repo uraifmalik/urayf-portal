@@ -1,6 +1,7 @@
 import type { ReactNode, SVGProps } from "react";
+import type { SidebarState } from "@/lib/preferences";
 
-/* urayf icon set (Part 9). Four custom icons, drawn to a 24-unit grid,
+/* urayf icon set (Part 9). Custom icons, drawn to a 24-unit grid,
    1.5 uniform stroke, round caps/joins, outline only. Paths are taken
    verbatim from the brand board. Icons inherit currentColor and are
    NEVER gold — gold is reserved (Part 2). */
@@ -66,19 +67,31 @@ const ICONS: Record<string, ReactNode> = {
   ),
 };
 
-export type IconName = keyof typeof ICONS;
+export type IconName = keyof typeof ICONS | "panel-toggle";
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "name"> {
   name: IconName;
   /** Square size in px. Default 24 — the drawing grid. */
   size?: number;
+  /** Sidebar collapse state, used only by the panel-toggle glyph to
+   *  position its inner divider. Ignored for other icons. */
+  state?: SidebarState;
 }
 
+/* panel-toggle — outer rectangle + a sliding inner divider. The divider
+   x position encodes the sidebar state (open=9, rail=11, hidden=15);
+   it animates between positions via CSS (.panel-toggle__divider). */
+const PANEL_TOGGLE_X: Record<SidebarState, number> = {
+  open: 9,
+  rail: 11,
+  hidden: 15,
+};
+
 /**
- * urayf icon (Part 9). Renders one of the four custom icons; the glyph
+ * urayf icon (Part 9). Renders one of the custom icons; the glyph
  * inherits the current text color via currentColor — never gold.
  */
-export function Icon({ name, size = 24, ...rest }: IconProps) {
+export function Icon({ name, size = 24, state, ...rest }: IconProps) {
   return (
     <svg
       width={size}
@@ -92,7 +105,21 @@ export function Icon({ name, size = 24, ...rest }: IconProps) {
       aria-hidden="true"
       {...rest}
     >
-      {ICONS[name]}
+      {name === "panel-toggle" ? (
+        <>
+          <rect x="3" y="5" width="18" height="14" />
+          <line
+            className="panel-toggle__divider"
+            data-state={state ?? "open"}
+            x1={PANEL_TOGGLE_X.open}
+            y1="5"
+            x2={PANEL_TOGGLE_X.open}
+            y2="19"
+          />
+        </>
+      ) : (
+        ICONS[name]
+      )}
     </svg>
   );
 }

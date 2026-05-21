@@ -66,11 +66,11 @@
   --space-6:  55px;        /* major — section-to-section, page margins */
 
   /* Corner radii — Part 4
-     Fibonacci, anchored at 3 (3 -> 5 -> 8 -> 13). */
-  --radius-sm:   3px;      /* chips, pills, small controls */
-  --radius-md:   5px;      /* buttons, inputs, small cards */
-  --radius-lg:   8px;      /* cards, panels, the report frame */
-  --radius-xl:  13px;      /* modals, large containers */
+     Fibonacci, anchored at 5 (5 -> 8 -> 13 -> 21). */
+  --radius-sm:   5px;      /* chips, pills, small controls */
+  --radius-md:   8px;      /* buttons, inputs, small cards */
+  --radius-lg:  13px;      /* cards, panels, the report frame */
+  --radius-xl:  21px;      /* modals, large containers */
 
   /* Motion durations — Part 12
      Three speeds, no others. */

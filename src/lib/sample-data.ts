@@ -10,9 +10,43 @@ import type { Profile, Report, Store } from "@/lib/types";
  */
 
 export const sampleStores: Store[] = [
-  { id: "s-001", name: "Downtown Flagship", created_at: "2026-01-05T09:00:00.000Z" },
-  { id: "s-002", name: "Riverside Branch", created_at: "2026-01-12T09:00:00.000Z" },
-  { id: "s-003", name: "Airport Kiosk", created_at: "2026-02-01T09:00:00.000Z" },
+  {
+    id: "s-001",
+    name: "Downtown Flagship",
+    slug: "downtown",
+    short_name: "Downtown",
+    display_order: 1,
+    created_at: "2026-01-05T09:00:00.000Z",
+  },
+  {
+    id: "s-002",
+    name: "Riverside Branch",
+    slug: "riverside",
+    short_name: "Riverside",
+    display_order: 2,
+    created_at: "2026-01-12T09:00:00.000Z",
+  },
+  {
+    id: "s-003",
+    name: "Airport Kiosk",
+    slug: "airport",
+    short_name: "Airport",
+    display_order: 3,
+    created_at: "2026-02-01T09:00:00.000Z",
+  },
+];
+
+/* profile_stores fixtures — store membership is now resolved
+   exclusively through this join table. The legacy profiles.store_id
+   column still exists in Supabase as a backward-compat shim, but
+   application code no longer reads it. */
+export const sampleProfileStores = [
+  { profile_id: "u-admin", store_id: "s-001" },
+  { profile_id: "u-admin", store_id: "s-002" },
+  { profile_id: "u-admin", store_id: "s-003" },
+  { profile_id: "u-001", store_id: "s-001" },
+  { profile_id: "u-002", store_id: "s-002" },
+  { profile_id: "u-003", store_id: "s-003" },
 ];
 
 export const sampleProfiles: Profile[] = [
@@ -21,44 +55,44 @@ export const sampleProfiles: Profile[] = [
     email: "demo@urayf.com",
     full_name: "Demo Admin",
     display_greeting: "Admin",
-    store_id: null,
     is_admin: true,
     plan: "max",
     plan_rate_override: 400,
     has_seen_welcome: true,
+    avatar_url: null,
   },
   {
     id: "u-001",
     email: "alex.kerr@example.com",
     full_name: "Alex Kerr",
     display_greeting: "Alex",
-    store_id: "s-001",
     is_admin: false,
     plan: "standard",
     plan_rate_override: null,
     has_seen_welcome: true,
+    avatar_url: null,
   },
   {
     id: "u-002",
     email: "priya.shah@example.com",
     full_name: "Priya Shah",
     display_greeting: "Mrs. Shah",
-    store_id: "s-002",
     is_admin: false,
     plan: "premium",
     plan_rate_override: null,
     has_seen_welcome: true,
+    avatar_url: null,
   },
   {
     id: "u-003",
     email: "sam.diaz@example.com",
     full_name: "Sam Diaz",
     display_greeting: null,
-    store_id: "s-003",
     is_admin: false,
     plan: null,
     plan_rate_override: null,
     has_seen_welcome: false,
+    avatar_url: null,
   },
 ];
 

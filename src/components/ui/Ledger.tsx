@@ -8,6 +8,9 @@ export interface LedgerRow {
   href: string;
   /** Type-pill word, e.g. "Daily". */
   pill: string;
+  /** Optional store pill (e.g. short_name) shown next to the type pill.
+   *  Same neutral treatment as the type pill — never gold. */
+  storePill?: string;
   title: string;
   /** Optional muted sub-line, e.g. a store name. */
   subtitle?: string;
@@ -67,7 +70,12 @@ export function Ledger({
       {rows.map((row) => (
         <li key={row.id}>
           <Link href={row.href} className="ledger__row">
-            {!hidePill && <TypePill>{row.pill}</TypePill>}
+            {!hidePill && (
+              <span className="ledger__row-pills">
+                {row.storePill && <TypePill>{row.storePill}</TypePill>}
+                <TypePill>{row.pill}</TypePill>
+              </span>
+            )}
             <span className="ledger__row-main">
               <span className="ledger__row-title">{row.title}</span>
               {row.subtitle && (

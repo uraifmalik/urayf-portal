@@ -52,3 +52,15 @@ body {
   animation-duration: 1200ms !important;
   animation-iteration-count: infinite !important;
 }
+
+/* ============================================================
+   panel-toggle icon — the inner divider slides between three
+   x positions to mirror the sidebar collapse state. Animated via
+   transform on a <line> in SVG userspace (1 unit = 1 px at 24px).
+   ============================================================ */
+.panel-toggle__divider {
+  transition: transform var(--duration-moderate) var(--ease-default);
+}
+.panel-toggle__divider[data-state="open"]   { transform: translateX(0); }
+.panel-toggle__divider[data-state="rail"]   { transform: translateX(2px); }
+.panel-toggle__divider[data-state="hidden"] { transform: translateX(6px); }

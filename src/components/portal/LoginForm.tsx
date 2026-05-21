@@ -24,12 +24,24 @@ export default function LoginForm() {
   );
   const [loading, setLoading] = useState(false);
 
+  /* Set just before navigating into the portal so the dashboard's
+     overlay knows this is a fresh sign-in. Cleared by LoginTransition
+     on mount, so it only ever fires once per login. */
+  function markJustLoggedIn() {
+    try {
+      sessionStorage.setItem("urayf-just-logged-in", "1");
+    } catch {
+      /* storage unavailable — overlay simply won't show */
+    }
+  }
+
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
 
     // Demo mode: no real auth — go straight into the portal.
     if (!isSupabaseConfigured) {
+      markJustLoggedIn();
       router.push(redirectTo);
       return;
     }
@@ -47,6 +59,7 @@ export default function LoginForm() {
       return;
     }
 
+    markJustLoggedIn();
     router.push(redirectTo);
     router.refresh();
   }

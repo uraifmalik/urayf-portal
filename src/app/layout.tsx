@@ -34,12 +34,11 @@ export const metadata: Metadata = {
   description: "urayf — client portal",
 };
 
-/* Set the theme and motion attributes on <html> SYNCHRONOUSLY,
-   before first paint, so a returning dark-mode (or reduced-motion)
-   user never sees a frame of the default. The Sidebar's mount
-   effect runs the same logic and reconciles to the same values.
-   Keys mirror Sidebar.tsx: urayf-theme, urayf-motion. */
-const themeInitScript = `(function(){try{var t=localStorage.getItem('urayf-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}var m=localStorage.getItem('urayf-motion');if(m==='full'||m==='reduced'){document.documentElement.setAttribute('data-motion',m);}else if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.setAttribute('data-motion','reduced');}}catch(e){}})();`;
+/* Set the theme, motion, and sidebar attributes on <html>
+   SYNCHRONOUSLY, before first paint, so a returning user never
+   sees a frame of the default. Mount effects reconcile to the
+   same values. Keys: urayf-theme, urayf-motion, urayf-sidebar. */
+const themeInitScript = `(function(){try{var t=localStorage.getItem('urayf-theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}var m=localStorage.getItem('urayf-motion');if(m==='full'||m==='reduced'){document.documentElement.setAttribute('data-motion',m);}else if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.setAttribute('data-motion','reduced');}var s=localStorage.getItem('urayf-sidebar');document.documentElement.setAttribute('data-sidebar',(s==='rail'||s==='hidden'||s==='open')?s:'open');}catch(e){}})();`;
 
 export default function RootLayout({
   children,

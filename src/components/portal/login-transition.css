@@ -1,0 +1,73 @@
+/* ============================================================
+   Login → Dashboard transition. Full-screen overlay over the
+   parchment ground. Always light, even when the user has
+   dark-theme preference set (matches the login screen's rule).
+   ============================================================ */
+
+.login-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  /* Light theme tokens, forced — do NOT inherit dark-theme paper. */
+  background-color: #EAE4D6;
+  color: #5A4632;
+  opacity: 1;
+  transition: opacity 300ms var(--ease-default);
+}
+.login-transition[data-phase="closing"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.login-transition__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* Reserved slot above the wordmark for the eventual logo icon —
+   intentionally empty until the icon is delivered. */
+.login-transition__logo-slot {
+  width: 64px;
+  height: 64px;
+}
+
+/* The wordmark is shown at the login-screen rung — 42px (display). */
+.login-transition__wordmark {
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  color: #5A4632;
+}
+
+/* Progress bar — 3px tall, 240px wide, fills left → right.
+   Track + fill use literal light-theme color values so the bar
+   visually reads the same regardless of the active theme. */
+.login-transition__bar-track {
+  margin-top: var(--space-4);                 /* 21px (Fibonacci) */
+  height: 3px;
+  width: 240px;
+  background-color: #D7CFC1;                  /* line-soft, light */
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.login-transition__bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(90, 70, 50, 0.4),                    /* text-primary @ 40% */
+    #5A4632                                   /* text-primary, full */
+  );
+  border-radius: var(--radius-sm);
+  animation: login-transition-fill 1000ms var(--ease-default) forwards;
+}
+
+@keyframes login-transition-fill {
+  from { width: 0; }
+  to   { width: 100%; }
+}

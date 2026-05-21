@@ -3,59 +3,29 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { TextField } from "@/components/ui/TextField";
 import { toast } from "@/components/ui/toast";
 import { isSupabaseConfigured } from "@/lib/config";
 import { createClient } from "@/lib/supabase/client";
 
 interface AccountSectionProps {
   email: string;
-  displayGreeting: string | null;
 }
 
-const DEMO_TOAST = "Demo mode — nothing is saved here.";
-
-export function AccountSection({
-  email,
-  displayGreeting,
-}: AccountSectionProps) {
+/**
+ * Account section — read-only email, password reset, sign-out.
+ * "How should we address you?" lives in the General section now,
+ * not here.
+ */
+export function AccountSection({ email }: AccountSectionProps) {
   const router = useRouter();
-  const [greeting, setGreeting] = useState<string>(displayGreeting ?? "");
-  const [savingGreeting, setSavingGreeting] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
-
-  async function saveGreeting() {
-    const trimmed = greeting.trim();
-    if (trimmed.length > 40) {
-      toast.error("Keep it under 40 characters.");
-      return;
-    }
-    setSavingGreeting(true);
-    try {
-      if (!isSupabaseConfigured) {
-        toast.success(DEMO_TOAST);
-        return;
-      }
-      const supabase = createClient();
-      const { error } = await supabase.rpc("set_display_greeting", {
-        new_greeting: trimmed,
-      });
-      if (error) throw error;
-      toast.success("Updated.");
-      router.refresh();
-    } catch {
-      toast.error("That didn't save. Try again in a moment.");
-    } finally {
-      setSavingGreeting(false);
-    }
-  }
 
   async function changePassword() {
     setResetting(true);
     try {
       if (!isSupabaseConfigured) {
-        toast.success(DEMO_TOAST);
+        toast.success("Demo mode — nothing is saved here.");
         return;
       }
       const supabase = createClient();
@@ -97,20 +67,8 @@ export function AccountSection({
         </Button>
       </div>
 
-      <div className="settings__field">
-        <TextField
-          label="How urayf addresses you"
-          value={greeting}
-          onChange={(e) => setGreeting(e.target.value)}
-          maxLength={40}
-          placeholder='e.g. "Mr. Malik"'
-        />
-        <Button rank="primary" onClick={saveGreeting} loading={savingGreeting}>
-          Save
-        </Button>
-      </div>
-
-      <div className="settings__signout">
+      <div className="settings__row">
+        <p className="settings__label">Session</p>
         <Button rank="secondary" onClick={signOut} loading={signingOut}>
           Sign out
         </Button>

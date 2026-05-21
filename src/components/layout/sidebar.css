@@ -1,9 +1,16 @@
 /* ============================================================
    urayf — Sidebar — brand system Part 8 (LOCKED)
    Tokens only — type sizes on the four-rung phi scale.
+   Three desktop states are driven by <html data-sidebar>:
+     open    — full sidebar (default)
+     rail    — narrow icon-only column
+     hidden  — sidebar removed from layout
+   Mobile (≤760px) ignores all three — the existing overlay
+   pattern in shell.css owns the mobile experience.
    ============================================================ */
 
 .sidebar {
+  position: relative;                       /* anchor for the toggle button */
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -12,36 +19,80 @@
   box-sizing: border-box;
 }
 
-/* ---- 1. logo wordmark — centered ---- */
-.sidebar__logo {
+/* ---- Collapse toggle — top-right corner of sidebar ----
+   Sits in the corner of the sidebar bounding box at 13/8px
+   (Fibonacci) so the wordmark below it stays centered. */
+.sidebar__toggle {
+  position: absolute;
+  top: 13px;
+  right: 8px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    color      var(--duration-quick) var(--ease-default),
+    background var(--duration-quick) var(--ease-default),
+    box-shadow 160ms                 var(--ease-focus);
+}
+.sidebar__toggle:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-raised);
+}
+.sidebar__toggle:focus-visible {
+  outline: none;
+  border-color: var(--color-text-primary);
+  box-shadow: inset 0 0 0 1px var(--color-text-primary);
+}
+
+/* ---- 1. logo wordmark — centered, links to Dashboard ---- */
+.sidebar__logo-link {
   display: block;
   padding: 0 var(--space-1);
   text-align: center;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity var(--duration-quick) var(--ease-default);
+}
+.sidebar__logo-link:hover {
+  opacity: 0.85;
+}
+.sidebar__logo-link:focus-visible {
+  outline: none;
+  opacity: 0.85;
+}
+.sidebar__logo {
+  display: inline-block;
 }
 
-/* ---- 2. greeting + store identity ---- */
+/* ---- 2. greeting — body-size, name in gold (Part 2) ---- */
 .sidebar__identity {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
   padding: 0 var(--space-1);
 }
-/* greeting — centered on the same axis as the wordmark above */
 .sidebar__welcome {
   margin: 0;
   text-align: center;
   font-family: var(--font-ui);
-  font-size: var(--text-body);
+  font-size: var(--text-body);              /* 16px — one rung down */
+  line-height: var(--leading-body);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
 }
-/* store identity — the quieter confirming line below, LEFT-aligned */
-.sidebar__store {
-  margin: 0;
-  font-family: var(--font-ui);
-  font-size: var(--text-body);
-  font-weight: var(--font-weight-regular);
-  color: var(--color-text-muted);
+/* The client's name — one of the four reserved gold uses (Part 2).
+   Spans render inline so short greetings ("Mr. Malik") fit on one
+   line; longer greetings wrap naturally. */
+.sidebar__welcome-name {
+  color: var(--color-mark);
+  font-weight: var(--font-weight-medium);
 }
 
 /* ---- 3. nav items — icon + label, the FILLED WELL marks active ---- */
@@ -89,36 +140,7 @@
   box-shadow: inset 0 0 0 1px var(--color-mark);
 }
 
-/* ---- 4. strategy-meeting card — CENTER-aligned ---- */
-.card.sidebar__meeting {
-  padding: var(--space-3);
-  margin-top: var(--space-2);
-  text-align: center;
-}
-.meeting__eyebrow {
-  margin: 0;
-  font-family: var(--font-ui);
-  font-size: var(--text-caption);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-  color: var(--color-text-primary);
-}
-.meeting__date {
-  margin: var(--space-1) 0 0;
-  font-family: var(--font-display);
-  font-weight: var(--font-weight-regular);
-  font-size: var(--text-body);
-  color: var(--color-text-primary);
-}
-.meeting__detail {
-  margin: var(--space-1) 0 0;
-  font-family: var(--font-ui);
-  font-size: var(--text-caption);
-  color: var(--color-text-muted);
-}
-
-/* ---- 5. bottom cluster — pushed down: identity only ---- */
+/* ---- 4. bottom cluster — pushed down: identity only ---- */
 .sidebar__bottom {
   margin-top: auto;
   display: flex;
@@ -132,7 +154,13 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: 0 var(--space-1);
+  padding: var(--space-1);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--ease-default);
+}
+.sidebar__user:hover {
+  background-color: var(--color-surface-raised);
 }
 .sidebar__avatar {
   display: inline-flex;
@@ -149,6 +177,10 @@
   letter-spacing: var(--tracking-caps);
   flex-shrink: 0;
 }
+.sidebar__avatar--image {
+  background-color: transparent;
+  object-fit: cover;
+}
 .sidebar__user-name {
   font-family: var(--font-ui);
   font-size: var(--text-body);
@@ -163,4 +195,139 @@
   font-family: var(--font-ui);
   font-size: var(--text-body);
   color: var(--color-text-muted);
+}
+
+/* ============================================================
+   Profile menu — anchored to the identity block, opens UPWARD.
+   ============================================================ */
+.profile-menu {
+  position: relative;
+}
+.profile-menu__trigger {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.profile-menu__trigger:focus-visible {
+  outline: none;
+}
+.profile-menu__trigger:focus-visible .sidebar__user {
+  box-shadow: inset 0 0 0 1px var(--color-text-primary);
+}
+
+.profile-menu__panel {
+  position: absolute;
+  bottom: calc(100% + var(--space-2));
+  left: 0;
+  right: 0;
+  min-width: 220px;
+  padding: var(--space-3);
+  background-color: var(--color-surface-raised);
+  border: 1px solid var(--color-line-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-l2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 20;
+  transform-origin: bottom left;
+  animation: profile-menu-in var(--duration-quick) var(--ease-default);
+}
+@keyframes profile-menu-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.profile-menu__email {
+  margin: 0;
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-normal);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profile-menu__divider {
+  height: 1px;
+  background-color: var(--color-line-soft);
+  margin: var(--space-1) 0;
+}
+.profile-menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2);
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--ease-default);
+}
+.profile-menu__item:hover,
+.profile-menu__item:focus-visible {
+  background-color: var(--color-surface-sunk);
+  outline: none;
+}
+.profile-menu__item:disabled,
+.profile-menu__item--soon {
+  cursor: not-allowed;
+  color: var(--color-text-muted);
+}
+.profile-menu__item--soon:hover {
+  background: none;
+}
+.profile-menu__soon {
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  font-style: italic;
+  color: var(--color-text-faint);
+}
+
+/* ============================================================
+   RAIL state — narrow icon-only column. Desktop only; mobile
+   media query in shell.css resets these to the overlay layout.
+   ============================================================ */
+[data-sidebar="rail"] .sidebar {
+  padding: var(--space-4) var(--space-2);
+  gap: var(--space-2);
+  align-items: center;
+}
+/* Hide everything that isn't a nav icon in rail mode */
+[data-sidebar="rail"] .sidebar__logo-link,
+[data-sidebar="rail"] .sidebar__identity,
+[data-sidebar="rail"] .sidebar__bottom {
+  display: none;
+}
+[data-sidebar="rail"] .sidebar__nav {
+  margin-top: var(--space-5);                /* clear the toggle button */
+  align-items: center;
+  width: 100%;
+}
+[data-sidebar="rail"] .nav-item {
+  justify-content: center;
+  padding: var(--space-2);
+  width: 40px;
+  gap: 0;
+}
+[data-sidebar="rail"] .nav-item__label {
+  display: none;
+}
+[data-sidebar="rail"] .sidebar__toggle {
+  top: 13px;
+  right: 50%;
+  transform: translateX(50%);
 }

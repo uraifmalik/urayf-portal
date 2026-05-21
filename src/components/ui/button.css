@@ -53,11 +53,12 @@
   box-shadow: inset 0 0 0 1px var(--color-mark);
 }
 
-/* ---- PRIMARY — gold hairline + faint wash, fills solid on hover ---- */
+/* ---- PRIMARY — gold hairline + faint wash, text-primary at rest;
+   fills solid gold on hover with paper-color text for contrast ---- */
 .btn--primary {
   background-color: color-mix(in srgb, var(--color-mark) 10%, transparent);
   border-color: var(--color-mark);
-  color: var(--color-mark);
+  color: var(--color-text-primary);
 }
 .btn--primary:not(:disabled):hover {
   background-color: var(--color-mark);     /* the match is the reward */

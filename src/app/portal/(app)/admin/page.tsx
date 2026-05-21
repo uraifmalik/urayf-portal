@@ -5,7 +5,12 @@ import UploadReportForm from "@/components/portal/UploadReportForm";
 import { Card } from "@/components/ui/Card";
 import { TypePill } from "@/components/ui/Pill";
 import { getCurrentUser } from "@/lib/auth";
-import { getProfiles, getReports, getStores } from "@/lib/data";
+import {
+  getAllProfileStores,
+  getProfiles,
+  getReports,
+  getStores,
+} from "@/lib/data";
 import "./admin.css";
 
 export const metadata: Metadata = {
@@ -22,14 +27,26 @@ export default async function AdminPage() {
   const user = await getCurrentUser();
   if (!user.is_admin) redirect("/portal/dashboard");
 
-  const [reports, stores, profiles] = await Promise.all([
+  const [reports, stores, profiles, profileStoresMap] = await Promise.all([
     getReports(),
     getStores(),
     getProfiles(),
+    getAllProfileStores(),
   ]);
 
   const storeName = (id: string | null) =>
     stores.find((s) => s.id === id)?.name ?? "—";
+
+  // Each profile's joined stores, joined as a comma-separated list of
+  // short_names. Admins have no store assignments (they see everything).
+  const storesForProfile = (profileId: string): string => {
+    const list = profileStoresMap.get(profileId);
+    if (!list || list.length === 0) return "—";
+    return list.map((s) => s.short_name).join(", ");
+  };
+
+  const nextDisplayOrder =
+    stores.reduce((max, s) => Math.max(max, s.display_order), 0) + 1;
 
   return (
     <div className="admin">
@@ -51,7 +68,10 @@ export default async function AdminPage() {
           <h2 className="panel__title">Add a store</h2>
         </div>
         <div className="panel__body">
-          <AddStoreForm />
+          <AddStoreForm
+            profiles={profiles}
+            nextDisplayOrder={nextDisplayOrder}
+          />
         </div>
       </Card>
 
@@ -110,7 +130,7 @@ export default async function AdminPage() {
               <tr>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Store</th>
+                <th>Stores</th>
                 <th>Role</th>
               </tr>
             </thead>
@@ -122,7 +142,7 @@ export default async function AdminPage() {
                   </td>
                   <td>{profile.email}</td>
                   <td>
-                    {profile.is_admin ? "—" : storeName(profile.store_id)}
+                    {profile.is_admin ? "—" : storesForProfile(profile.id)}
                   </td>
                   <td>{profile.is_admin ? "Admin" : "Client"}</td>
                 </tr>

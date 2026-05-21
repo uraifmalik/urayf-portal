@@ -81,9 +81,11 @@ export default function ShellPreviewPage() {
       <div data-theme="light">
         <AppShell
           greeting="Mr. Malik"
-          storeIdentity="7-Eleven Store #19775"
+          userId="preview"
+          email="preview@urayf.com"
           fullName="Aisha Rahman"
           plan="premium"
+          stores={[]}
           isAdmin
         >
           <SampleContent theme="Light" />
@@ -92,9 +94,11 @@ export default function ShellPreviewPage() {
       <div data-theme="dark">
         <AppShell
           greeting="Mr. Malik"
-          storeIdentity="7-Eleven Store #19775"
+          userId="preview"
+          email="preview@urayf.com"
           fullName="Aisha Rahman"
           plan="premium"
+          stores={[]}
           isAdmin
         >
           <SampleContent theme="Dark" />
