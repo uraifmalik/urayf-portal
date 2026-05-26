@@ -1,0 +1,54 @@
+# ─── Python ───────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+.eggs/
+
+# ─── Virtual environments ─────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ─── uv ───────────────────────────────────────────────────────────────────
+# uv.lock IS committed (it's a lockfile, not an artifact)
+
+# ─── Test + coverage output ───────────────────────────────────────────────
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# ─── Linter caches ────────────────────────────────────────────────────────
+.ruff_cache/
+.mypy_cache/
+
+# ─── IDE ──────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── OS ───────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Secrets / local config ───────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.local.toml
+
+# ─── Engine-specific ──────────────────────────────────────────────────────
+# Anything we drop locally for one-off testing / debugging
+scratch/
+local_snapshots/

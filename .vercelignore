@@ -1,0 +1,3 @@
+# Vercel only builds the Next.js portal at the repo root.
+# The engine/ directory is Python and never deploys to Vercel.
+engine/
