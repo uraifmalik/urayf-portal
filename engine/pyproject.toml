@@ -10,6 +10,7 @@ authors = [
 license = { text = "Proprietary" }
 
 dependencies = [
+    "playwright>=1.60.0",
     "pydantic>=2.9",
 ]
 
